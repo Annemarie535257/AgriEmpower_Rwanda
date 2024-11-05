@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farmer Registration - AgriEmpower Rwanda</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #2E8B57; color: #333; }
+    .registration-form { max-width: 600px; margin: 30px auto; padding: 20px; background: #f9f9f9; border-radius: 10px; }
+    h2 { text-align: center; color: #2E8B57; }
+    .btn-submit { background: #2E8B57; color: white; width: 100%; }
+    .btn-submit:hover { background: #2E8B57; }
+  </style>
+</head>
+<body>
+
+<div class="registration-form">
+  <h2>Farmer Registration</h2>
+  <form action="/register_farmer" method="post">
+    <div class="form-group">
+      <label for="fullName">Full Name:</label>
+      <input type="text" class="form-control" id="fullName" name="full_name" required>
+    </div>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" class="form-control" id="email" name="email" required>
+    </div>
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input type="password" class="form-control" id="password" name="password" required>
+    </div>
+    <div class="form-group">
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" class="form-control" id="confirmPassword" name="confirm_password" required>
+    </div>
+    <div class="form-group">
+      <label for="phoneNumber">Phone Number:</label>
+      <input type="text" class="form-control" id="phoneNumber" name="phone_number" required>
+    </div>
+    <div class="form-group">
+      <label for="farmLocation">Farm Location:</label>
+      <input type="text" class="form-control" id="farmLocation" name="farm_location" required>
+    </div>
+    <div class="form-group">
+      <label for="cropTypes">Crop Types (e.g., Maize, Wheat):</label>
+      <input type="text" class="form-control" id="cropTypes" name="crop_types" required>
+    </div>
+    <div class="form-group">
+      <label for="farmSize">Farm Size (in hectares):</label>
+      <input type="number" step="0.1" class="form-control" id="farmSize" name="farm_size">
+    </div>
+    <button type="submit" class="btn btn-submit">Register</button>
+  </form>
+</div>
+
+</body>
+</html>

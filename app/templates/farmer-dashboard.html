@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Dashboard | AgriEmpower</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Styling */
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            background-color: #2E8B57;
+            padding-top: 20px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+            font-weight: 700;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+
+        .sidebar ul li {
+            padding: 15px 0;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #2E8B57;
+            padding-left: 10px;
+            border-radius: 5px;
+        }
+
+        .sidebar ul li a i {
+            margin-right: 10px;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .navbar {
+            background-color: #ffffff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .dropdown-toggle img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .active-section {
+            display: block;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h5 {
+            font-weight: 600;
+        }
+
+        .card .card-text {
+            color: #6c757d;
+        }
+
+        .table {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .table th, .table td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        .table th {
+            background-color: #2E8B57;
+            color: white;
+        }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .progress-bar {
+            flex-grow: 1;
+            height: 4px;
+            background-color: #ccc;
+            margin: 0 10px;
+        }
+
+        .progress-step.active .step-number {
+            background-color: #2E8B57;
+            color: white;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background-color: #ccc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div>
+                <h2>AgriEmpower</h2>
+                <ul>
+                    <li><a href="#" id="home-link"><i class="bi bi-house-fill"></i> Home</a></li>
+                    <li><a href="#" id="my-farms-link"><i class="bi bi-tree-fill"></i> My Farms</a></li>
+                    <li><a href="#" id="loan-applications-link"><i class="bi bi-clipboard-check"></i> Loan Applications</a></li>
+                    <li><a href="#" id="progress-link"><i class="bi bi-bar-chart-fill"></i> Progress</a></li>
+                </ul>
+            </div>
+            <ul>
+                <li><a href="#"><i class="bi bi-person-fill"></i> Profile</a></li>
+                <li><a href="#"><i class="bi bi-gear-fill"></i> Settings</a></li>
+                <li><a href="#" class="text-danger"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+            </ul>
+        </div>
+
+         <!-- Main content -->
+         <div class="main-content flex-grow-1">
+            <!-- Navbar -->
+            <nav class="navbar navbar-light bg-white shadow-sm mb-4">
+                <div class="container-fluid d-flex justify-content-between align-items-center">
+                    <a class="navbar-brand">Financial Institution Dashboard</a>
+                    <form class="d-flex search-bar">
+                        <input class="form-control me-2" type="search" placeholder="Search..." aria-label="Search">
+                    </form>
+                </div>
+            </nav>
+            <!-- Home Section with Overview and Charts -->
+            <div id="home-section" class="content-section active-section">
+                <h4>Overview</h4>
+                <div class="row">
+                    <!-- Farm Overview Card -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Farms</h5>
+                                <p class="card-text">5 Active Farms</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loan Applications Card -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Pending Loan Applications</h5>
+                                <p class="card-text">3 Pending</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Productivity Card -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Farm Productivity</h5>
+                                <p class="card-text">82% Average</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Farm Productivity Over Time</h5>
+                                <canvas id="productivityChart"></canvas> <!-- Chart.js for farm productivity -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Loan Status Overview</h5>
+                                <canvas id="loanStatusChart"></canvas> <!-- Chart.js for loan status -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loan Progress -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5>Loan Application Progress</h5>
+                        <div class="progress-step mb-4">
+                            <div class="step-number active">1</div>
+                            <div class="progress-bar"></div>
+                            <div class="step-number">2</div>
+                            <div class="progress-bar"></div>
+                            <div class="step-number">3</div>
+                        </div>
+                        <div>
+                            <p>Step 1: Loan Application Submitted</p>
+                            <p>Step 2: Loan Application Under Review</p>
+                            <p>Step 3: Loan Approved/Rejected</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Farms Section -->
+            <div id="my-farms-section" class="content-section">
+                <h4>My Farms</h4>
+                <!-- Farm Details Form -->
+                <div class="form-section mb-4">
+                    <h5>Enter Farm Details</h5>
+                    <form id="farm-form">
+                        <input type="text" class="form-control mb-2" id="farmName" placeholder="Farm Name" required>
+                        <input type="text" class="form-control mb-2" id="farmLocation" placeholder="Farm Location" required>
+                        <input type="number" class="form-control mb-2" id="farmSize" placeholder="Farm Size (acres)" required>
+                        <select class="form-control mb-2" id="cropType" required>
+                            <option selected disabled>Choose Crop Type</option>
+                            <option value="Maize">Maize</option>
+                            <option value="Beans">Beans</option>
+                            <option value="Wheat">Wheat</option>
+                            <option value="Coffee">Coffee</option>
+                        </select>
+                        <button type="submit" class="btn btn-success">Add Farm</button>
+                    </form>
+                </div>
+
+                <!-- Farm Table -->
+                <h5>Your Farms</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Farm Name</th>
+                            <th>Location</th>
+                            <th>Size (acres)</th>
+                            <th>Crop Type</th>
+                        </tr>
+                    </thead>
+                    <tbody id="farm-table-body">
+                        <!-- Farm data rows will be appended here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Loan Applications Section -->
+            <div id="loan-applications-section" class="content-section">
+                <h4>Loan Applications</h4>
+                <div class="mb-4">
+                    <label for="bank-selection" class="form-label">Select a Bank</label>
+                    <select class="form-select" id="bank-selection" onchange="displayForm()">
+                        <option value="" selected disabled>Select Bank</option>
+                        <option value="bk">Bank of Kigali</option>
+                        <option value="im">I&M Bank Rwanda</option>
+                        <option value="eq">Equity Bank Rwanda</option>
+                    </select>
+                </div>
+                <div id="loan-form-section" style="display: none;">
+                    <h5 class="mb-3">Download and Upload Loan Application Form</h5>
+                    <a id="download-link" href="#" class="btn btn-primary mb-3" download>Download Loan Form</a>
+                    <form>
+                        <div class="mb-3">
+                            <label for="loan-form-upload" class="form-label">Upload Completed Loan Form</label>
+                            <input type="file" class="form-control" id="loan-form-upload">
+                        </div>
+                        <button type="submit" class="btn btn-success">Submit Application</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Progress Section -->
+            <div id="progress-section" class="content-section">
+                <h4>Loan Application Progress</h4>
+                <div class="progress-step mb-4">
+                    <div class="step-number active">1</div>
+                    <div class="progress-bar"></div>
+                    <div class="step-number">2</div>
+                    <div class="progress-bar"></div>
+                    <div class="step-number">3</div>
+                </div>
+                <div>
+                    <p>Step 1: Loan Application Submitted</p>
+                    <p>Step 2: Loan Application Under Review</p>
+                    <p>Step 3: Loan Approved/Rejected</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS for Navigation and Form Submission -->
+    <script>
+        document.getElementById("home-link").addEventListener("click", function () {
+            showSection("home-section");
+        });
+
+        document.getElementById("my-farms-link").addEventListener("click", function () {
+            showSection("my-farms-section");
+        });
+
+        document.getElementById("loan-applications-link").addEventListener("click", function () {
+            showSection("loan-applications-section");
+        });
+
+        document.getElementById("progress-link").addEventListener("click", function () {
+            showSection("progress-section");
+        });
+
+        function showSection(sectionId) {
+            document.querySelectorAll(".content-section").forEach(function (section) {
+                section.classList.remove("active-section");
+            });
+            document.getElementById(sectionId).classList.add("active-section");
+        }
+
+        function displayForm() {
+            var selectedBank = document.getElementById("bank-selection").value;
+            var downloadLink = document.getElementById("download-link");
+
+            if (selectedBank === "bk") {
+                downloadLink.href = "assets/forms/bk-loan-form.pdf";
+            } else if (selectedBank === "im") {
+                downloadLink.href = "assets/forms/im-loan-form.pdf";
+            } else if (selectedBank === "eq") {
+                downloadLink.href = "assets/forms/eq-loan-form.pdf";
+            }
+
+            document.getElementById("loan-form-section").style.display = "block";
+        }
+
+        // Handle Farm Form Submission and Add Row to Table
+        document.getElementById('farm-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            var farmName = document.getElementById('farmName').value;
+            var farmLocation = document.getElementById('farmLocation').value;
+            var farmSize = document.getElementById('farmSize').value;
+            var cropType = document.getElementById('cropType').value;
+
+            var newRow = `
+                <tr>
+                    <td>${farmName}</td>
+                    <td>${farmLocation}</td>
+                    <td>${farmSize}</td>
+                    <td>${cropType}</td>
+                </tr>
+            `;
+
+            document.getElementById('farm-table-body').innerHTML += newRow;
+
+            // Clear form after submission
+            document.getElementById('farm-form').reset();
+        });
+
+        // Chart.js for Farm Productivity
+        var ctx1 = document.getElementById('productivityChart').getContext('2d');
+        var productivityChart = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+                datasets: [{
+                    label: 'Productivity (%)',
+                    data: [70, 75, 80, 85, 90, 95],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: false
+                }]
+            }
+        });
+
+        // Chart.js for Loan Status
+        var ctx2 = document.getElementById('loanStatusChart').getContext('2d');
+        var loanStatusChart = new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Approved', 'Pending', 'Rejected'],
+                datasets: [{
+                    data: [60, 30, 10],
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                }]
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgriEmpower Rwanda - Select Your Category</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #2E8B57;
+      color: #333;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 50px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 30px;
+      color: #fff;
+      text-align: center;
+    }
+
+    .card {
+      width: 300px;
+      margin: 10px;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .card-body {
+      text-align: center;
+      padding: 15px;
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .btn-getstarted {
+      width: 100%;
+      padding: 10px;
+      background-color: #2E8B57;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .btn-getstarted:hover {
+      background-color: #2E8B57;
+    }
+
+    .card-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Select which describes you best</h1>
+  <div class="card-container">
+    
+    <!-- Farmer Card -->
+    <div class="card">
+      <img src="assets/img/farmer.jpeg" alt="Farmer Image">
+      <div class="card-body">
+        <h5 class="card-title">Farmer</h5>
+        <p class="card-text">Are you a farmer looking to join AgriEmpower?</p>
+        <button class="btn-getstarted" onclick="window.location.href='registerf.html'">Get Started</button>
+      </div>
+    </div>
+
+    <!-- Cooperative Card -->
+    <div class="card">
+      <img src="assets/img/coop.jpeg" alt="Cooperative Image">
+      <div class="card-body">
+        <h5 class="card-title">Cooperative</h5>
+        <p class="card-text">Manage or represent a cooperative? Start here.</p>
+        <button class="btn-getstarted" onclick="window.location.href='registerc.html'">Get Started</button>
+      </div>
+    </div>
+
+    <!-- Financial Institution Card -->
+    <div class="card">
+      <img src="assets/img/fin.jpeg" alt="Financial Institution Image">
+      <div class="card-body">
+        <h5 class="card-title">Financial Institution</h5>
+        <p class="card-text">Are you a financial institution representative? Join us.</p>
+        <button class="btn-getstarted" onclick="window.location.href='registerfin.html'">Get Started</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

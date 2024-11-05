@@ -1,0 +1,10 @@
+django
+psycopg2-binary
+django-environ
+djangorestframework
+django-cors-headers
+django-phonenumber-field
+phonenumbers
+django-otp
+djangorestframework-simplejwt
+drf-yasg #swagger to document APIs
