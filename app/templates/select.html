@@ -1,3 +1,4 @@
+{%load static%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,7 +85,7 @@
     
     <!-- Farmer Card -->
     <div class="card">
-      <img src="assets/img/farmer.jpeg" alt="Farmer Image">
+      <img src="{% static 'img/farmer.jpeg' %}" alt="Farmer Image">
       <div class="card-body">
         <h5 class="card-title">Farmer</h5>
         <p class="card-text">Are you a farmer looking to join AgriEmpower?</p>
@@ -94,7 +95,7 @@
 
     <!-- Cooperative Card -->
     <div class="card">
-      <img src="assets/img/coop.jpeg" alt="Cooperative Image">
+      <img src="{% static 'img/coop.jpeg' %}" alt="Cooperative Image">
       <div class="card-body">
         <h5 class="card-title">Cooperative</h5>
         <p class="card-text">Manage or represent a cooperative? Start here.</p>
@@ -104,7 +105,7 @@
 
     <!-- Financial Institution Card -->
     <div class="card">
-      <img src="assets/img/fin.jpeg" alt="Financial Institution Image">
+      <img src="{% static 'img/fin.jpeg' %}" alt="Financial Institution Image">
       <div class="card-body">
         <h5 class="card-title">Financial Institution</h5>
         <p class="card-text">Are you a financial institution representative? Join us.</p>

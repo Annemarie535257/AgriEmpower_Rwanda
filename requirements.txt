@@ -8,3 +8,6 @@ phonenumbers
 django-otp
 djangorestframework-simplejwt
 drf-yasg #swagger to document APIs
+gunicorn
+pillow
+whitenoise
