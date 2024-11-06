@@ -196,7 +196,7 @@ def verify_token_farmer(request, username):
                 user.is_active = True
                 user.save()
                 messages.success(request, "Account activated successfully! You can now log in.")
-                return redirect("login_farmer")  # Change to your farmer login URL
+                return redirect("signin_farmer")  # Change to your farmer login URL
             else:
                 messages.warning(request, "The OTP has expired, please request a new OTP.")
                 return redirect("verify_token_farmer", username=user.username)
@@ -220,7 +220,7 @@ def verify_token_cooperative(request, username):
                 user.is_active = True
                 user.save()
                 messages.success(request, "Account activated successfully! You can now log in.")
-                return redirect("login_cooperative")  # Change to your cooperative login URL
+                return redirect("signin_cooperative")  # Change to your cooperative login URL
             else:
                 messages.warning(request, "The OTP has expired, please request a new OTP.")
                 return redirect("verify_token_cooperative", username=user.username)
@@ -242,7 +242,7 @@ def verify_token_financial_institution(request, username):
                 user.is_active = True
                 user.save()
                 messages.success(request, "Account activated successfully! You can now log in.")
-                return redirect("login_financial_institution")  # Change to your financial institution login URL
+                return redirect("signin_financial_institution")  # Change to your financial institution login URL
             else:
                 messages.warning(request, "The OTP has expired, please request a new OTP.")
                 return redirect("verify_token_financial_institution", username=user.username)
@@ -263,7 +263,7 @@ def signin_farmer(request):
             username = User.objects.get(email=email).username
         except User.DoesNotExist:
             messages.warning(request, "Invalid email or password.")
-            return redirect("login_farmer")
+            return redirect("signin_farmer")
         
         user = authenticate(request, username=username, password=password)
 
@@ -292,7 +292,7 @@ def signin_cooperative(request):
             username = User.objects.get(email=email).username
         except User.DoesNotExist:
             messages.warning(request, "Invalid email or password.")
-            return redirect("login_cooperative")
+            return redirect("signin_cooperative")
         
         user = authenticate(request, username=username, password=password)
 
@@ -321,7 +321,7 @@ def signin_financial_institution(request):
             username = User.objects.get(email=email).username
         except User.DoesNotExist:
             messages.warning(request, "Invalid email or password.")
-            return redirect("login_financial_institution")
+            return redirect("signin_financial_institution")
         
         user = authenticate(request, username=username, password=password)
 
@@ -333,10 +333,10 @@ def signin_financial_institution(request):
                 return redirect("financial_institution_dashboard")  # Redirect to your financial institution dashboard URL
             else:
                 messages.warning(request, "Account is not registered as a Financial Institution.")
-                return redirect("login_financial_institution")
+                return redirect("sign_financial_institution")
         else:
             messages.warning(request, "Invalid credentials or account is not active.")
-            return redirect("login_financial_institution")
+            return redirect("sign_financial_institution")
 
     return render(request, "loginfin.html", {"form": None})
 
