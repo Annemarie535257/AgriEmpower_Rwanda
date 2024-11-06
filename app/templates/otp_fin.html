@@ -1,3 +1,4 @@
+{%load static%}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -93,8 +94,9 @@
   <main class="main">
     <div class="otp-form">
       <h2>OTP Verification</h2>
-      <p>Please enter the OTP sent to your email or phone.</p>
-      <form action="verify-otp.php" method="post">
+      <p>Please enter the OTP sent to your email.</p>
+      <form method="post">
+        {% csrf_token %}
         <div class="form-group">
           <label for="otp">Enter OTP</label>
           <input type="text" id="otp" name="otp" class="form-control" placeholder="Enter your OTP" required>

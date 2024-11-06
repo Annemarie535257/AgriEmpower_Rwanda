@@ -1,3 +1,4 @@
+{%load static%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,7 +18,8 @@
 
 <div class="registration-form">
   <h2>Farmer Registration</h2>
-  <form action="/register_farmer" method="post">
+  <form action="{% url 'signup_farmer' %}" method="post">
+    {% csrf_token %}
     <div class="form-group">
       <label for="fullName">Full Name:</label>
       <input type="text" class="form-control" id="fullName" name="full_name" required>

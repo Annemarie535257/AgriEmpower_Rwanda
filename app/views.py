@@ -205,7 +205,7 @@ def verify_token_farmer(request, username):
             return redirect("verify_token_farmer", username=user.username)
 
     context = {'user': user}
-    return render(request, "otpf.html", context)
+    return render(request, "otp_f.html", context)
 
 # vrify token for the cooperative
 
@@ -229,7 +229,7 @@ def verify_token_cooperative(request, username):
             return redirect("verify_token_cooperative", username=user.username)
 
     context = {'user': user}
-    return render(request, "otpc.html", context)
+    return render(request, "otp_c.html", context)
 
 def verify_token_financial_institution(request, username):
     user = get_object_or_404(User, username=username)
@@ -251,7 +251,7 @@ def verify_token_financial_institution(request, username):
             return redirect("verify_token_financial_institution", username=user.username)
 
     context = {'user': user}
-    return render(request, "otpfin.html", context)
+    return render(request, "otp_fin.html", context)
 
 #signin view for the farmer
 

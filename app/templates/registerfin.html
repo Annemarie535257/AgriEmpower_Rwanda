@@ -1,3 +1,4 @@
+{%load static%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,7 +18,8 @@
 
 <div class="registration-form">
   <h2>Financial Institution Registration</h2>
-  <form action="/register_financial_institution" method="post">
+  <form action="{% url 'signup_financial_institution' %}" method="post">
+    {% csrf_token %}
     <div class="form-group">
       <label for="institutionName">Institution Name:</label>
       <input type="text" class="form-control" id="institutionName" name="name" required>
