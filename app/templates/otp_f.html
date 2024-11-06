@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>OTP Verification - AgriEmpower Rwanda</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="assets/css/main.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: url('assets/img/otp-bg.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .otp-form {
+      max-width: 400px;
+      margin: auto;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .otp-form h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      background: #2E8B57;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .btn-submit:hover {
+      background: #2E8B57;
+    }
+
+    /* Center the form on the page */
+    .main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Main OTP Form Section -->
+  <main class="main">
+    <div class="otp-form">
+      <h2>OTP Verification</h2>
+      <p>Please enter the OTP sent to your email or phone.</p>
+      <form action="verify-otp.php" method="post">
+        <div class="form-group">
+          <label for="otp">Enter OTP</label>
+          <input type="text" id="otp" name="otp" class="form-control" placeholder="Enter your OTP" required>
+        </div>
+        <button type="submit" class="btn-submit">Verify OTP</button>
+      </form>
+      <p class="text-center mt-3">Didn't receive OTP? <a href="#">Resend OTP</a></p>
+    </div>
+  </main>
+  <!-- End Main OTP Form Section -->
+
+  <!-- Main JS File -->
+  <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>

@@ -59,16 +59,19 @@ urlpatterns = [
     path('', homepage, name='homepage'),  # Homepage
     path('home/', views.home_view, name='home'),  # Homepage
     path('select/', views.select_view, name='select'), 
-    path('register/farmer/', views.register_farmer, name='register_farmer'),
-    path('register/cooperative/', views.register_cooperative, name='register_cooperative'),
-    path('register/financial_institution/', views.register_financial_institution, name='register_financial_institution'),
+    path('signup/farmer/', views.signup_farmer, name='signup_farmer'),
+    path('signup/cooperative/', views.signup_cooperative, name='signup_cooperative'),
+    path('signup/financial-institution/', views.signup_financial_institution, name='signup_financial_institution'),
 
     # OTP Paths for Two-Factor Authentication
-    path('otp/request/', views.request_otp, name='request_otp'),
-    path('otp/verify/', views.verify_otp, name='verify_otp'),
+    path('verify-token/farmer/<str:username>/', views.verify_token_farmer, name='verify_token_farmer'),
+    path('verify-token/cooperative/<str:username>/', views.verify_token_cooperative, name='verify_token_cooperative'),
+    path('verify-token/financial-institution/<str:username>/', views.verify_token_financial_institution, name='verify_token_financial_institution'),
 
     # Authentication Path
-    path('signin/', views.signin, name='signin'),
+    path('signin/farmer/', views.signin_farmer, name='signin_farmer'),
+    path('signin/cooperative/', views.signin_cooperative, name='signin_cooperative'),
+    path('signin/financial_institution/', views.signin_financial_institution, name='signin_financial_institution'),
 
     # Loan Application Paths
     path('loan/apply/', views.apply_for_loan, name='apply_for_loan'),  # Apply for loan
