@@ -30,6 +30,11 @@ urlpatterns = [
     path('signin/cooperative/', views.signin_cooperative, name='signin_cooperative'),
     path('signin/financial-institution/', views.signin_financial_institution, name='signin_financial_institution'),
 
+    # Dashboards
+    path('dashboard/farmer/', views.farmer_dashboard, name='farmer_dashboard'),
+    path('dashboard/cooperative/', views.cooperative_dashboard, name='cooperative_dashboard'),
+    path('dashboard/financial-institution/', views.financial_institution_dashboard, name='financial_institution_dashboard'),
+
     # Loan Application Paths
     path('loan/apply/', views.apply_for_loan, name='apply_for_loan'),  # Apply for loan
     path('loan/track/<uuid:loan_id>/', views.track_loan_status, name='track_loan_status'),  # Track loan status by loan ID

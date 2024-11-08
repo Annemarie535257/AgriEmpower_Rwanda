@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.models import User
@@ -30,13 +33,22 @@ from .schemas import (
     signin_response_schema
 )
 
+
+
 def home_view(request):
     return render(request, 'index.html')
 
 def select_view(request):
     return render(request, 'select.html')
 
+def cooperative_dashboard(request):
+    return render(request, 'cooperative_dashboard.html')
 
+def farmer_dashboard(request):
+    return render(request, 'farmer_dashboard.html')
+
+def financial_institution_dashboard(request):
+    return render(request, 'institution_dashboard.html')
 
 # Helper function to generate OTP expiration time
 def get_expiry_time():
@@ -214,19 +226,21 @@ def verify_token_cooperative(request, username):
     user_otp = OTP.objects.filter(email=user.email).last()
 
     if request.method == 'POST':
-        otp_code = request.POST.get('otp_code')  # OTP entered by the user
+        otp_code = request.POST.get('otp_code')  # Make sure this matches your form field name
+        logger.info(f"OTP entered by user: {otp_code}, OTP from DB: {user_otp.otp if user_otp else 'None'}")
+
         if otp_code and user_otp and user_otp.otp == otp_code:
             if user_otp.expires_at > timezone.now():
                 user.is_active = True
                 user.save()
                 messages.success(request, "Account activated successfully! You can now log in.")
-                return redirect("signin_cooperative")  # Change to your cooperative login URL
+                return redirect("signin_cooperative")  # Redirect to cooperative login page
             else:
                 messages.warning(request, "The OTP has expired, please request a new OTP.")
-                return redirect("verify_token_cooperative", username=user.username)
         else:
             messages.warning(request, "Invalid OTP entered, please try again.")
-            return redirect("verify_token_cooperative", username=user.username)
+
+        return redirect("verify_token_cooperative", username=user.username)
 
     context = {'user': user}
     return render(request, "otp_c.html", context)
@@ -288,28 +302,61 @@ def signin_cooperative(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
+        
+        # Debugging - Print email and password received from form
+        print(f"Received email: {email}")
+        print(f"Received password: {password}")
+
+        # Check if email exists in User model
         try:
-            username = User.objects.get(email=email).username
+            user = User.objects.get(email=email)
+            username = user.username
+            print(f"User found: {username}")
         except User.DoesNotExist:
+            print("User not found.")
+            messages.warning(request, "Invalid email or password.")
+            return redirect("signin_cooperative")
+
+        # Print user details before authentication
+        print(f"User details - Username: {username}, is_active: {user.is_active}")
+
+        # Check if the provided password is correct
+        if not user.check_password(password):
+            print("Password does not match.")
             messages.warning(request, "Invalid email or password.")
             return redirect("signin_cooperative")
         
+        # Authenticate user
         user = authenticate(request, username=username, password=password)
-
-        if user is not None and user.is_active:
-            # Check if user is a cooperative
-            if Cooperative.objects.filter(email=email).exists():
-                login(request, user)
-                messages.success(request, f"Hi {user.username}, you are now logged in.")
-                return redirect("cooperative_dashboard")  # Redirect to your cooperative dashboard URL
+        if user is not None:
+            print(f"Authentication successful for user: {username}")
+            
+            # Check if user is active
+            if user.is_active:
+                # Check if user is a cooperative
+                if Cooperative.objects.filter(email=email).exists():
+                    print(f"User {username} is a registered cooperative.")
+                    login(request, user)
+                    messages.success(request, f"Hi {user.username}, you are now logged in.")
+                    return redirect("cooperative_dashboard")  # Redirect to your cooperative dashboard URL
+                else:
+                    print(f"User {username} is not registered as a Cooperative.")
+                    messages.warning(request, "Account is not registered as a Cooperative.")
+                    return redirect("signin_cooperative")
             else:
-                messages.warning(request, "Account is not registered as a Cooperative.")
-                return redirect("sign_cooperative")
+                print(f"User {username} is not active.")
+                messages.warning(request, "Account is not active.")
+                return redirect("signin_cooperative")
         else:
+            print(f"Authentication failed for user: {username}. Invalid credentials or account not active.")
             messages.warning(request, "Invalid credentials or account is not active.")
-            return redirect("sign_cooperative")
+            return redirect("signin_cooperative")
 
+    # If GET request or form is not submitted correctly
+    print("Rendering login page for cooperative.")
     return render(request, "loginc.html", {"form": None})
+
+
 
 #signin view for the financial institution
 

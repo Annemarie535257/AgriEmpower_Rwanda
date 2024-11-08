@@ -10,8 +10,8 @@
   <meta name="keywords" content="">
 
   <!-- Favicons -->
-  <link href="assets/img/favicon.png" rel="icon">
-  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link href="static/img/favicon.png" rel="icon">
+  <link href="static/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -19,15 +19,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
-  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
 
   <!-- Main CSS File -->
-  <link href="assets/css/main.css" rel="stylesheet">
+  <link href="{% static 'css/main.css' %}" rel="stylesheet">
 
   <style>
     body {
-      background: url('assets/img/otp-bg.jpg') no-repeat center center fixed;
+      background: url('img/otp-bg.jpg') no-repeat center center fixed;
       background-size: cover;
     }
 
@@ -99,7 +99,7 @@
         {% csrf_token %}
         <div class="form-group">
           <label for="otp">Enter OTP</label>
-          <input type="text" id="otp" name="otp" class="form-control" placeholder="Enter your OTP" required>
+          <input type="text" id="otp" name="otp_code" class="form-control" placeholder="Enter your OTP" required>
         </div>
         <button type="submit" class="btn-submit">Verify OTP</button>
       </form>
@@ -109,7 +109,7 @@
   <!-- End Main OTP Form Section -->
 
   <!-- Main JS File -->
-  <script src="assets/js/main.js"></script>
+  <script src="{% static 'js/main.js' %}"></script>
 
 </body>
 
