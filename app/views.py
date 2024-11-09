@@ -70,6 +70,7 @@ def signup_farmer(request):
         if user_form.is_valid() and farmer_form.is_valid():
             # Create user but don't save to database yet
             user = user_form.save(commit=False)
+            user.set_password(user_form.cleaned_data.get('password'))  # Set password
             user.is_active = False  # Set user as inactive until OTP is verified
             user.username = farmer_form.cleaned_data.get('full_name')  # Set username as full name
             user.save()
@@ -77,7 +78,7 @@ def signup_farmer(request):
             # Create Farmer instance linked to user
             farmer = farmer_form.save(commit=False)
             farmer.user = user  # Assuming you have a OneToOne relationship with User
-            farmer.farmer_id = uuid.uuid4()  # Generate unique farmer ID
+            # farmer.farmer_id = uuid.uuid4()  # Generate unique farmer ID
             farmer.save()
 
             # Generate OTP
@@ -115,6 +116,7 @@ def signup_cooperative(request):
         if user_form.is_valid() and cooperative_form.is_valid():
             # Create user but don't save to database yet
             user = user_form.save(commit=False)
+            user.set_password(user_form.cleaned_data.get('password'))  # Set password
             user.is_active = False  # Set user as inactive until OTP is verified
             user.username = cooperative_form.cleaned_data.get('name')  # Set username as cooperative name
             user.save()
@@ -122,7 +124,7 @@ def signup_cooperative(request):
             # Create Cooperative instance linked to user
             cooperative = cooperative_form.save(commit=False)
             cooperative.user = user  # Assuming you have a OneToOne relationship with User
-            cooperative.coop_id = uuid.uuid4()  # Generate unique cooperative ID
+            # cooperative.coop_id = uuid.uuid4()  # Generate unique cooperative ID
             cooperative.save()
 
             # Generate OTP
@@ -160,6 +162,7 @@ def signup_financial_institution(request):
         if user_form.is_valid() and financial_institution_form.is_valid():
             # Create user but don't save to database yet
             user = user_form.save(commit=False)
+            user.set_password(user_form.cleaned_data.get('password'))  # Set password
             user.is_active = False  # Set user as inactive until OTP is verified
             user.username = financial_institution_form.cleaned_data.get('name')  # Set username as financial institution name
             user.save()
@@ -167,7 +170,7 @@ def signup_financial_institution(request):
             # Create Financial Institution instance linked to user
             financial_institution = financial_institution_form.save(commit=False)
             financial_institution.user = user  # Assuming you have a OneToOne relationship with User
-            financial_institution.fin_id = uuid.uuid4()  # Generate unique financial institution ID
+            # financial_institution.fin_id = uuid.uuid4()  # Generate unique financial institution ID
             financial_institution.save()
 
             # Generate OTP
@@ -282,14 +285,10 @@ def signin_farmer(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None and user.is_active:
-            # Check if user is a farmer
-            if Farmer.objects.filter(email=email).exists():
                 login(request, user)
                 messages.success(request, f"Hi {user.username}, you are now logged in.")
                 return redirect("farmer_dashboard")  # Redirect to your farmer dashboard URL
-            else:
-                messages.warning(request, "Account is not registered as a Farmer.")
-                return redirect("sign_farmer")
+           
         else:
             messages.warning(request, "Invalid credentials or account is not active.")
             return redirect("signin_farmer")
@@ -303,57 +302,24 @@ def signin_cooperative(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         
-        # Debugging - Print email and password received from form
-        print(f"Received email: {email}")
-        print(f"Received password: {password}")
-
-        # Check if email exists in User model
         try:
-            user = User.objects.get(email=email)
-            username = user.username
-            print(f"User found: {username}")
+            username = User.objects.get(email=email).username
         except User.DoesNotExist:
-            print("User not found.")
-            messages.warning(request, "Invalid email or password.")
-            return redirect("signin_cooperative")
-
-        # Print user details before authentication
-        print(f"User details - Username: {username}, is_active: {user.is_active}")
-
-        # Check if the provided password is correct
-        if not user.check_password(password):
-            print("Password does not match.")
             messages.warning(request, "Invalid email or password.")
             return redirect("signin_cooperative")
         
         # Authenticate user
         user = authenticate(request, username=username, password=password)
-        if user is not None:
-            print(f"Authentication successful for user: {username}")
-            
-            # Check if user is active
-            if user.is_active:
-                # Check if user is a cooperative
-                if Cooperative.objects.filter(email=email).exists():
-                    print(f"User {username} is a registered cooperative.")
+        if user is not None or user.is_active:
+                    
                     login(request, user)
                     messages.success(request, f"Hi {user.username}, you are now logged in.")
                     return redirect("cooperative_dashboard")  # Redirect to your cooperative dashboard URL
-                else:
-                    print(f"User {username} is not registered as a Cooperative.")
-                    messages.warning(request, "Account is not registered as a Cooperative.")
-                    return redirect("signin_cooperative")
-            else:
-                print(f"User {username} is not active.")
-                messages.warning(request, "Account is not active.")
-                return redirect("signin_cooperative")
+               
         else:
-            print(f"Authentication failed for user: {username}. Invalid credentials or account not active.")
             messages.warning(request, "Invalid credentials or account is not active.")
             return redirect("signin_cooperative")
 
-    # If GET request or form is not submitted correctly
-    print("Rendering login page for cooperative.")
     return render(request, "loginc.html", {"form": None})
 
 
@@ -373,14 +339,11 @@ def signin_financial_institution(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None and user.is_active:
-            # Check if user is a financial institution
-            if FinancialInstitution.objects.filter(email=email).exists():
+
                 login(request, user)
                 messages.success(request, f"Hi {user.username}, you are now logged in.")
                 return redirect("financial_institution_dashboard")  # Redirect to your financial institution dashboard URL
-            else:
-                messages.warning(request, "Account is not registered as a Financial Institution.")
-                return redirect("sign_financial_institution")
+            
         else:
             messages.warning(request, "Invalid credentials or account is not active.")
             return redirect("sign_financial_institution")

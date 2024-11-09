@@ -7,6 +7,7 @@ def get_expiry_time():
     return timezone.now() + timezone.timedelta(minutes=15)
 
 class Cooperative(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, default=None)
     coop_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
@@ -21,6 +22,7 @@ class Cooperative(models.Model):
         return self.name
 
 class Farmer(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, default=None)
     farmer_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     full_name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
@@ -34,6 +36,7 @@ class Farmer(models.Model):
         return self.full_name
 
 class FinancialInstitution(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, default=None)
     fin_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     institution_type = models.CharField(max_length=100)  # e.g., Bank, Microfinance
