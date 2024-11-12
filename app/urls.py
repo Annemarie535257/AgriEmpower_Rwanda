@@ -16,7 +16,7 @@ urlpatterns = [
     # Registration Paths
     path('', homepage, name='homepage'),  # Homepage
     path('home/', views.home_view, name='home'),  # Homepage
-    path('select/', views.select_view, name='select'),  
+    path('select/', views.select_view, name='select'), 
     path('signup/farmer/', views.signup_farmer, name='signup_farmer'),
     path('signup/cooperative/', views.signup_cooperative, name='signup_cooperative'),
     path('signup/financial-institution/', views.signup_financial_institution, name='signup_financial_institution'),
@@ -42,6 +42,8 @@ urlpatterns = [
     # Loan Approval/Denial Paths for Cooperative Managers and Financial Institutions
     path('loan/approve/<uuid:loan_id>/', views.respond_to_loan_application, name='respond_to_loan_application'),  # Approve loan
     path('loan/reject/<uuid:loan_id>/', views.respond_to_loan_application, name='respond_to_loan_application'),  # Reject loan
+
+    path('logout/', views.logout_view, name='logout'),
 
 
 ]

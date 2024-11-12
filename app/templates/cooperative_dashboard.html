@@ -1,11 +1,10 @@
-{%load static%}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cooperative Dashboard | AgriEmpower</title>
+    <title>Cooperative Manager Dashboard | AgriEmpower</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -16,52 +15,115 @@
             font-family: 'Poppins', sans-serif;
         }
 
-        .sidebar {
-            width: 250px;
-            height: 100vh;
-            position: fixed;
-            background-color: #2E8B57;
-            padding-top: 20px;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
+        .logo-img {
+    width: 100%;
+    max-width: 200px; /* Adjust this value as needed */
+    height: auto;
+    display: block;
+    margin: 0 auto 20px auto; /* Centers the image and adds bottom margin */
+}
 
-        .sidebar h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: white;
-            font-weight: 700;
-        }
+/* Sidebar Container */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #2E8B57;
+    border-radius: 15px;
+    padding: 20px;
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
-        .sidebar ul {
-            list-style-type: none;
-            padding-left: 20px;
-        }
+/* Sidebar Top Section */
+.sidebar-top {
+    flex-grow: 1;
+}
 
-        .sidebar ul li {
-            padding: 15px 0;
-        }
+/* Sidebar Bottom Section */
+.sidebar-bottom {
+    margin-top: auto;
+}
 
-        .sidebar ul li a {
-            color: white;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-        }
+/* Sidebar Links */
+.sidebar ul {
+    list-style-type: none;
+    padding-left: 0;
+}
 
-        .sidebar ul li a:hover {
-            background-color: #2E8B57;
-            padding-left: 10px;
-            border-radius: 5px;
-        }
+.sidebar ul li {
+    padding: 10px 0;
+}
 
-        .sidebar ul li a i {
-            margin-right: 10px;
-        }
+.sidebar ul li a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+
+.sidebar ul li a:hover {
+    background-color: #c4e750;
+    color: #ffffff;
+}
+
+.sidebar ul li a i {
+    margin-right: 10px;
+}
+
+/* Logo Image Styling */
+.logo-img {
+    width: 100%;
+    max-width: 200px; /* Adjust as needed */
+    height: auto;
+    display: block;
+    margin: 0 auto 20px auto; /* Centers the image and adds bottom margin */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+        padding: 15px;
+    }
+
+    .sidebar ul li a {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .logo-img {
+        max-width: 150px;
+    }
+}
+
+
+/* Rounded Edges for Sidebar */
+.sidebar {
+    border-radius: 20px;
+}
+
+/* Floating Effect */
+.sidebar {
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Active Link Styling */
+.sidebar ul li a.active {
+    background-color: #ff7f50;
+    color: #ffffff;
+}
+
 
         .main-content {
             margin-left: 250px;
@@ -177,8 +239,10 @@
     <div class="d-flex">
         <!-- Sidebar -->
         <div class="sidebar">
-            <div>
-                <h2>AgriEmpower</h2>
+            <div class="sidebar-top">
+                <div class="text-center">
+                    <img src="{% static 'img/log.png' %}" alt="AgriEmpower Logo" class="logo-img">
+                </div>
                 <ul>
                     <li><a href="#" id="home-link"><i class="bi bi-house-fill"></i> Home</a></li>
                     <li><a href="#" id="coop-members-link"><i class="bi bi-people-fill"></i> Cooperative Members</a></li>
@@ -187,13 +251,16 @@
                     <li><a href="#" id="loan-applications-link"><i class="bi bi-clipboard-check"></i> Loan Applications</a></li>
                 </ul>
             </div>
-            <ul>
-                <li><a href="#"><i class="bi bi-person-fill"></i> Profile</a></li>
-                <li><a href="#"><i class="bi bi-gear-fill"></i> Settings</a></li>
-                <li><a href="#" class="text-danger"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
-            </ul>
+            <div class="sidebar-bottom">
+                <ul>
+                    <li><a href="#"><i class="bi bi-person-fill"></i> Profile</a></li>
+                    <li><a href="#"><i class="bi bi-gear-fill"></i> Settings</a></li>
+                    <li><a href="{% url 'logout' %}" class="text-danger"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                </ul>
+            </div>
         </div>
 
+        
         <!-- Main content -->
         <div class="main-content flex-grow-1">
             <!-- Navbar -->
@@ -488,11 +555,11 @@
             var downloadLink = document.getElementById("download-link");
 
             if (selectedBank === "bk") {
-                downloadLink.href = "assets/forms/bk-loan-form.pdf";
+               downloadLink.href = "{% static 'files/BKLoanApplication.pdf' %}";
             } else if (selectedBank === "im") {
-                downloadLink.href = "assets/forms/im-loan-form.pdf";
+               downloadLink.href = "{% static 'files/im-loan-form.pdf' %}";
             } else if (selectedBank === "eq") {
-                downloadLink.href = "assets/forms/eq-loan-form.pdf";
+               downloadLink.href = "{% static 'files/eq-loan-form.pdf' %}";
             }
 
             document.getElementById("loan-form-section").style.display = "block";

@@ -86,6 +86,8 @@ urlpatterns = [
     path('loan/approve/<uuid:loan_id>/', views.respond_to_loan_application, name='respond_to_loan_application'),  # Approve loan
     path('loan/reject/<uuid:loan_id>/', views.respond_to_loan_application, name='respond_to_loan_application'),  # Reject loan
 
+    path('logout/', views.logout_view, name='logout'),
+
 
 ]
 if settings.DEBUG:
