@@ -19,12 +19,12 @@ import uuid
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.shortcuts import redirect
-from .forms import UserRegistrationForm, FarmerRegistrationForm, CooperativeRegistrationForm, FinancialInstitutionRegistrationForm, FarmerProfileForm
+from .forms import UserRegistrationForm, FarmerRegistrationForm, CooperativeRegistrationForm, FinancialInstitutionRegistrationForm
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseBadRequest
 
 
-from .models import Farmer, Cooperative, FinancialInstitution, OTP, LoanApplication, FarmerProfile
+from .models import Farmer, Cooperative, FinancialInstitution, OTP, LoanApplication
 from .schemas import (
     farmer_register_schema,
     cooperative_register_schema,
@@ -46,17 +46,11 @@ def cooperative_dashboard(request):
     return render(request, 'cooperative_dashboard.html')
 
 def farmer_dashboard(request):
-     # Assuming you have a session key to identify the farmer
-    farmer_id = request.session.get('farmer_id')
-
-    # Use the correct field to retrieve the Farmer instance
-    farmer_profile = get_object_or_404(Farmer, farmer_id=farmer_id)
-
-    # Now you can use the Farmer instance properly
-    loan_applications = LoanApplication.objects.filter(farmer=farmer_profile)
+    # Assuming the user is already authenticated, fetch the farmer profile from the user
+    farmer = get_object_or_404(Farmer, user=request.user)
     
     # Proceed with rendering the dashboard or handling other logic
-    return render(request, 'farmer_dashboard.html', {'loan_applications': loan_applications})
+    return render(request, 'farmer_dashboard.html', {'farmer': farmer})
 def financial_institution_dashboard(request):
     return render(request, 'institution_dashboard.html')
 
@@ -90,17 +84,19 @@ def signup_farmer(request):
             # farmer.user = user  # Assuming you have a OneToOne relationship with User
             # farmer.save()
 
-            # Create FarmerProfile linked to user
-            farmer_profile = FarmerProfile.objects.create(
+            # Create Farmer instance linked to user
+            farmer = Farmer.objects.create(
                 user=user,
                 full_name=farmer_form.cleaned_data.get('full_name'),
+                email=user.email,
+                password=user.password,  # Store the password hash
                 phone_number=farmer_form.cleaned_data.get('phone_number'),
-                farm_name=farmer_form.cleaned_data.get('farm_name'),
                 farm_location=farmer_form.cleaned_data.get('farm_location'),
-                farm_size=farmer_form.cleaned_data.get('farm_size'),
-                crop_type=farmer_form.cleaned_data.get('crop_type'),
+                crop_types=farmer_form.cleaned_data.get('crop_types', ''),
+                farm_size=farmer_form.cleaned_data.get('farm_size', None),
+                farm_name=farmer_form.cleaned_data.get('farm_name', '')
             )
-            farmer_profile.save()
+
 
             # Generate OTP
             otp_code = ''.join([str(random.randint(0, 9)) for _ in range(6)])
@@ -484,22 +480,4 @@ def logout_view(request):
         logger.error(f"Error occurred during logout: {str(e)}")
         messages.error(request, "An error occurred during logout. Please try again later.")
         return redirect('homepage')
-
-
-def edit_profile(request):
-    user = request.user
-    farmer_profile = get_object_or_404(FarmerProfile, user=user)
-
-    if request.method == 'POST':
-        form = FarmerProfileForm(request.POST, instance=farmer_profile)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Profile updated successfully!")
-            return redirect('farmer_dashboard')
-
-    else:
-        form = FarmerProfileForm(instance=farmer_profile)
-
-    context = {'form': form}
-    return render(request, 'edit_profile.html', context)
 

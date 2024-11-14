@@ -72,15 +72,15 @@ class OTP(models.Model):
         return f'OTP for {self.email}'
 
 
-class FarmerProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    full_name = models.CharField(max_length=100)
-    address = models.CharField(max_length=255, blank=True, null=True)
-    phone_number = models.CharField(max_length=15, blank=True, null=True)
-    farm_name = models.CharField(max_length=255, blank=True, null=True)
-    farm_location = models.CharField(max_length=255, blank=True, null=True)
-    farm_size = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    crop_type = models.CharField(max_length=100, blank=True, null=True)
+# class FarmerProfile(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE)
+#     full_name = models.CharField(max_length=100)
+#     address = models.CharField(max_length=255, blank=True, null=True)
+#     phone_number = models.CharField(max_length=15, blank=True, null=True)
+#     farm_name = models.CharField(max_length=255, blank=True, null=True)
+#     farm_location = models.CharField(max_length=255, blank=True, null=True)
+#     farm_size = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+#     crop_type = models.CharField(max_length=100, blank=True, null=True)
 
-    def __str__(self):
-        return self.full_name
+#     def __str__(self):
+#         return self.full_name

@@ -283,17 +283,19 @@
             <div id="profile-section" class="content-section">
                 <h4>Profile Information</h4>
                 {% if farmer_profile %}
+                    <h2>Farmer Dashboard</h2>
                     <p><strong>Full Name:</strong> {{ farmer_profile.full_name }}</p>
+                    <p><strong>Email:</strong> {{ farmer.email }}</p>  <!-- Assuming you are fetching farmer's user email -->
                     <p><strong>Phone Number:</strong> {{ farmer_profile.phone_number }}</p>
-                    <p><strong>Farm Name:</strong> {{ farmer_profile.farm_name }}</p>
                     <p><strong>Farm Location:</strong> {{ farmer_profile.farm_location }}</p>
-                    <p><strong>Farm Size (acres):</strong> {{ farmer_profile.farm_size }}</p>
-                    <p><strong>Crop Type:</strong> {{ farmer_profile.crop_type }}</p>
+                    <p><strong>Crop Types:</strong> {{ farmer_profile.crop_type }}</p>
+                    <p><strong>Farm Size:</strong> {{ farmer_profile.farm_size }} hectares</p>
                     <a href="{% url 'edit_profile' %}" class="btn btn-primary mt-3">Edit Profile</a>
                 {% else %}
                     <p>No profile information found.</p>
                 {% endif %}
             </div>
+            
             
 
             <!-- My Farms Section -->
