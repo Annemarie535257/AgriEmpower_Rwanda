@@ -46,17 +46,17 @@ def cooperative_dashboard(request):
     return render(request, 'cooperative_dashboard.html')
 
 def farmer_dashboard(request):
-    farmer_profile = FarmerProfile.objects.filter(user=request.user).first()
-    if farmer_profile:
-        print("Farmer Profile found:", farmer_profile.full_name)
-        loan_applications = LoanApplication.objects.filter(farmer=farmer_profile)
+     # Assuming you have a session key to identify the farmer
+    farmer_id = request.session.get('farmer_id')
 
-    context = {
-        'farmer_profile': farmer_profile,
-        'loan_applications': loan_applications if farmer_profile else None
-    }
-    return render(request, 'farmer_dashboard.html')
+    # Use the correct field to retrieve the Farmer instance
+    farmer_profile = get_object_or_404(Farmer, farmer_id=farmer_id)
 
+    # Now you can use the Farmer instance properly
+    loan_applications = LoanApplication.objects.filter(farmer=farmer_profile)
+    
+    # Proceed with rendering the dashboard or handling other logic
+    return render(request, 'farmer_dashboard.html', {'loan_applications': loan_applications})
 def financial_institution_dashboard(request):
     return render(request, 'institution_dashboard.html')
 
