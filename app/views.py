@@ -96,6 +96,7 @@ def signup_farmer(request):
                 farm_size=farmer_form.cleaned_data.get('farm_size', None),
                 farm_name=farmer_form.cleaned_data.get('farm_name', '')
             )
+            farmer.save()
 
 
             # Generate OTP
