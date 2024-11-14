@@ -32,8 +32,8 @@ SECRET_KEY = 'django-insecure-c6&!pw9836qlpcbudg0+3vld2fip_%$(87fhzd(bla_x(y=j=p
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['agri-empower-rwanda.vercel.app/', 'localhost', '127.0.0.1']
-CSRF_TRUSTED_ORIGINS = ['agri-empower-rwanda.vercel.app/']
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['https://agriempower-rwanda.onrender.com']
 
 
 # Application definition
