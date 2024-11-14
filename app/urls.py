@@ -37,7 +37,7 @@ urlpatterns = [
 
     # Loan Application Paths
     path('loan/apply/', views.apply_for_loan, name='apply_for_loan'),  # Apply for loan
-    path('loan/track/<uuid:loan_id>/', views.track_loan_status, name='track_loan_status'),  # Track loan status by loan ID
+    path('loan-track/<uuid:loan_id>/', views.track_loan_status, name='track_loan_status'),  # Track loan status by loan ID
 
     # Loan Approval/Denial Paths for Cooperative Managers and Financial Institutions
     path('loan/approve/<uuid:loan_id>/', views.respond_to_loan_application, name='respond_to_loan_application'),  # Approve loan

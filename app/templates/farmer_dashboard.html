@@ -351,48 +351,55 @@
             </div>
 
             <!-- Loan Applications Section -->
-            <div id="loan-applications-section" class="content-section">
-                <h4>Loan Applications</h4>
-                <div class="mb-4">
-                    <label for="bank-selection" class="form-label">Select a Bank</label>
-                    <select class="form-select" id="bank-selection" onchange="displayForm()">
-                        <option value="" selected disabled>Select Bank</option>
-                        <option value="bk">Bank of Kigali</option>
-                        <option value="im">I&M Bank Rwanda</option>
-                        <option value="eq">Equity Bank Rwanda</option>
-                    </select>
-                </div>
-                <div id="loan-form-section" style="display: none;">
-                    <h5 class="mb-3">Download and Upload Loan Application Form</h5>
-                    <a id="download-link" href="#" class="btn btn-primary mb-3" download>Download Loan Form</a>
-                    <form>
-                        <div class="mb-3">
-                            <label for="loan-form-upload" class="form-label">Upload Completed Loan Form</label>
-                            <input type="file" class="form-control" id="loan-form-upload">
-                        </div>
-                        <button type="submit" class="btn btn-success">Submit Application</button>
-                    </form>
-                </div>
+<div id="loan-applications-section" class="content-section">
+    <h4>Loan Applications</h4>
+    <form method="post" action="{% url 'apply_for_loan' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-4">
+            <label for="financial-institution" class="form-label">Select a Bank</label>
+            <select class="form-select" name="financial_institution" id="bank-selection" onchange="displayForm()" required>
+                <option value="" selected disabled>Select Bank</option>
+                <option value="Bank of Kigali">Bank of Kigali</option>
+                <option value="I&M Bank">I&M Bank Rwanda</option>
+                <option value="Equity Bank">Equity Bank Rwanda</option>
+            </select>
+        </div>
+        <div id="loan-form-section" style="display: none;">
+            <h5 class="mb-3">Download and Upload Loan Application Form</h5>
+            <a id="download-link" href="#" class="btn btn-primary mb-3" download>Download Loan Form</a>
+            <div class="mb-3">
+                <label for="loan-form-upload" class="form-label">Upload Completed Loan Form</label>
+                <input type="file" class="form-control" name="loan_form" id="loan-form-upload" required>
             </div>
+            <input type="hidden" name="farmer_id" value="{{ farmer_profile.farmer_id }}">
+            <button type="submit" class="btn btn-success">Submit Application</button>
+        </div>
+    </form>
+</div>
+
 
             <!-- Progress Section -->
             <div id="progress-section" class="content-section">
                 <h4>Loan Application Progress</h4>
-                <div class="progress-step mb-4">
-                    <div class="step-number active">1</div>
-                    <div class="progress-bar"></div>
-                    <div class="step-number">2</div>
-                    <div class="progress-bar"></div>
-                    <div class="step-number">3</div>
-                </div>
-                <div>
-                    <p>Step 1: Loan Application Submitted</p>
-                    <p>Step 2: Loan Application Under Review</p>
-                    <p>Step 3: Loan Approved/Rejected</p>
-                </div>
+                {% if loan_applications %}
+                    {% for application in loan_applications %}
+                        <div class="progress-step mb-4">
+                            <div class="step-number {% if application.loan_status == 'Pending' or application.loan_status == 'Under Review' or application.loan_status == 'Approved' %}active{% endif %}">1</div>
+                            <div class="progress-bar"></div>
+                            <div class="step-number {% if application.loan_status == 'Under Review' or application.loan_status == 'Approved' %}active{% endif %}">2</div>
+                            <div class="progress-bar"></div>
+                            <div class="step-number {% if application.loan_status == 'Approved' or application.loan_status == 'Rejected' %}active{% endif %}">3</div>
+                        </div>
+                        <div>
+                            <p>Step 1: Loan Application Submitted - {{ application.loan_status }}</p>
+                            <p>Step 2: Loan Application Under Review</p>
+                            <p>Step 3: Loan {{ application.loan_status }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No loan applications found.</p>
+                {% endif %}
             </div>
-        </div>
-    </div>
 
     <!-- JS for Navigation and Form Submission -->
     <script>
@@ -417,6 +424,13 @@
             showSection("profile-section");
         });
 
+        document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('loan_submitted') === 'true') {
+            alert('Loan application submitted successfully and is under review.');
+        }
+        });
+
 
         function showSection(sectionId) {
             document.querySelectorAll(".content-section").forEach(function (section) {
@@ -426,6 +440,30 @@
             document.getElementById(sectionId).classList.add("active-section");
         }
 
+        function updateProgress(status) {
+
+           // Update progress tracker based on loan status
+           if (status === 'submitted') {
+            document.getElementById('step1').classList.add('active');
+           } else if (status === 'under_review') {
+            document.getElementById('step1').classList.add('active');
+            document.getElementById('bar1').style.backgroundColor = '#2E8B57';
+            document.getElementById('step2').classList.add('active');
+           } else if (status === 'approved' || status === 'rejected') {
+            document.getElementById('step1').classList.add('active');
+            document.getElementById('bar1').style.backgroundColor = '#2E8B57';
+            document.getElementById('step2').classList.add('active');
+            document.getElementById('bar2').style.backgroundColor = '#2E8B57';
+            document.getElementById('step3').classList.add('active');
+           }
+        }
+
+// Call this function with the current status
+// Assuming you will fetch the status dynamically from backend or during page load
+updateProgress('submitted');
+
+
+
          // Show the selected section
     // const activeSection = document.getElementById(sectionId);
     // if (activeSection) {
@@ -433,21 +471,22 @@
     //     activeSection.style.display = "block"; // Make sure it displays properly
     // }
 
-        function displayForm() {
+    function displayForm() {
     var selectedBank = document.getElementById("bank-selection").value;
     var downloadLink = document.getElementById("download-link");
 
-    if (selectedBank === "bk") {
+    if (selectedBank === "Bank of Kigali") {
         downloadLink.href = "{% static 'files/BKLoanApplication.pdf' %}";
-    } else if (selectedBank === "im") {
+    } else if (selectedBank === "I&M Bank") {
         downloadLink.href = "{% static 'files/im-loan-form.pdf' %}";
-    } else if (selectedBank === "eq") {
+    } else if (selectedBank === "Equity Bank") {
         downloadLink.href = "{% static 'files/eq-loan-form.pdf' %}";
     }
 
     // Set download attribute to ensure the PDF downloads instead of opening
     downloadLink.setAttribute("download", "");
 
+    // Display the loan form section after selecting a bank
     document.getElementById("loan-form-section").style.display = "block";
 }
 

@@ -21,6 +21,7 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from .forms import UserRegistrationForm, FarmerRegistrationForm, CooperativeRegistrationForm, FinancialInstitutionRegistrationForm, FarmerProfileForm
 from django.shortcuts import get_object_or_404
+from django.http import HttpResponseBadRequest
 
 
 from .models import Farmer, Cooperative, FinancialInstitution, OTP, LoanApplication, FarmerProfile
@@ -45,15 +46,14 @@ def cooperative_dashboard(request):
     return render(request, 'cooperative_dashboard.html')
 
 def farmer_dashboard(request):
-
     farmer_profile = FarmerProfile.objects.filter(user=request.user).first()
     if farmer_profile:
         print("Farmer Profile found:", farmer_profile.full_name)
-    else:
-        print("No Farmer Profile found")
+        loan_applications = LoanApplication.objects.filter(farmer=farmer_profile)
 
     context = {
-        'farmer_profile': farmer_profile
+        'farmer_profile': farmer_profile,
+        'loan_applications': loan_applications if farmer_profile else None
     }
     return render(request, 'farmer_dashboard.html')
 
@@ -371,39 +371,45 @@ def signin_financial_institution(request):
 
     return render(request, "loginfin.html", {"form": None})
 
-# Loan Application
-@swagger_auto_schema(
-    method='post',
-    operation_description="Apply for a loan",
-    request_body=loan_application_schema,
-    responses={201: 'Loan application submitted', 400: 'Bad Request'}
-)
-@csrf_exempt
-@api_view(['POST'])
-@permission_classes([AllowAny])
 def apply_for_loan(request):
-    try:
-        data = request.data
-        farmer = Farmer.objects.get(farmer_id=data['farmer_id'])
-        financial_institution = FinancialInstitution.objects.get(fin_id=data['financial_institution_id'])
-        
-        loan_application = LoanApplication.objects.create(
-            farmer=farmer,
-            financial_institution=financial_institution,
-            loan_amount=data['loan_amount'],
-            loan_status='Pending'
-        )
-        return Response({
-            "message": "Loan application submitted",
-            "loan_id": str(loan_application.loan_id),
-            "farmer": loan_application.farmer.full_name,
-            "financial_institution": loan_application.financial_institution.name,
-            "loan_amount": loan_application.loan_amount,
-            "loan_status": loan_application.loan_status
-        }, status=201)
+    if request.method == 'POST':
+        farmer_id = request.POST.get('farmer_id')
+        financial_institution = request.POST.get('financial_institution')
+        loan_form = request.FILES.get('loan_form')
 
-    except Exception as e:
-        return Response({"error": str(e)}, status=400)
+        if not farmer_id or not financial_institution or not loan_form:
+            messages.error(request, "All fields are required.")
+            return redirect('farmer_dashboard')
+
+        try:
+            # Get the farmer using farmer_id
+            farmer = Farmer.objects.get(farmer_id=farmer_id)
+
+            # Assuming FinancialInstitution has a unique name
+            financial_institution_obj = FinancialInstitution.objects.get(name=financial_institution)
+
+            # Create a loan application
+            loan_application = LoanApplication.objects.create(
+                farmer=farmer,
+                financial_institution=financial_institution_obj,
+                loan_amount=5000,  # or capture this value from the form if needed
+                loan_status='Pending',
+                form_file=loan_form  # assuming LoanApplication model has a FileField for form_file
+            )
+
+            # Redirect back to farmer dashboard with a success query parameter
+            return redirect('farmer_dashboard') + '?loan_submitted=true'
+
+        except Farmer.DoesNotExist:
+            messages.error(request, "Farmer not found.")
+            return redirect('farmer_dashboard')
+
+        except FinancialInstitution.DoesNotExist:
+            messages.error(request, "Selected financial institution not found.")
+            return redirect('farmer_dashboard')
+
+    messages.error(request, "Invalid request method.")
+    return redirect('farmer_dashboard')
 
 # Loan Application Response (Approve or Deny)
 @swagger_auto_schema(
