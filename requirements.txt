@@ -11,3 +11,4 @@ drf-yasg #swagger to document APIs
 gunicorn
 pillow
 whitenoise
+daphne gunicorn

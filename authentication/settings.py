@@ -32,8 +32,8 @@ SECRET_KEY = 'django-insecure-c6&!pw9836qlpcbudg0+3vld2fip_%$(87fhzd(bla_x(y=j=p
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://agriempower-rwanda.onrender.com']
+ALLOWED_HOSTS = ['agri-empower-rwanda.vercel.app/', 'localhost', '127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['agri-empower-rwanda.vercel.app/']
 
 
 # Application definition
@@ -59,6 +59,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -66,7 +67,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'authentication.urls'
@@ -99,8 +100,11 @@ DATABASES = {
         "NAME": env("DB_NAME"),
         "USER": env("DB_USER"),
         "PASSWORD": env("DB_PWD"),
-        "HOST": env("DB_HOST", default="102.22.143.17"),
-        "PORT": env("DB_PORT", default="5432"),
+        "HOST": env("DB_HOST"),
+        "PORT": env("DB_PORT"),
+        'OPTIONS': {
+            'sslmode': 'require',  # Make sure SSL is enabled for Neon connections
+        },
     }
 }
 
