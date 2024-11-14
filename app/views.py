@@ -94,7 +94,6 @@ def signup_farmer(request):
                 farm_location=farmer_form.cleaned_data.get('farm_location'),
                 crop_types=farmer_form.cleaned_data.get('crop_types', ''),
                 farm_size=farmer_form.cleaned_data.get('farm_size', None),
-                farm_name=farmer_form.cleaned_data.get('farm_name', '')
             )
             farmer.save()
 
