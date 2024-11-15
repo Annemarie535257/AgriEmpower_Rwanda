@@ -351,33 +351,41 @@
                     </tbody>
                 </table>
             </div>
-
-            <!-- Loan Applications Section -->
+<!-- Loan Applications Section -->
 <div id="loan-applications-section" class="content-section">
     <h4>Loan Applications</h4>
     <form method="post" action="{% url 'apply_for_loan' %}" enctype="multipart/form-data">
         {% csrf_token %}
+        
+        <!-- Bank Selection -->
         <div class="mb-4">
             <label for="financial-institution" class="form-label">Select a Bank</label>
             <select class="form-select" name="financial_institution" id="bank-selection" onchange="displayForm()" required>
                 <option value="" selected disabled>Select Bank</option>
                 <option value="Bank of Kigali">Bank of Kigali</option>
-                <option value="I&M Bank">I&M Bank Rwanda</option>
-                <option value="Equity Bank">Equity Bank Rwanda</option>
+                <option value="I&M Bank Rwanda">I&M Bank Rwanda</option>
+                <option value="Equity Bank Rwanda">Equity Bank Rwanda</option>
             </select>
         </div>
+
+        <!-- Loan Form Upload Section -->
         <div id="loan-form-section" style="display: none;">
             <h5 class="mb-3">Download and Upload Loan Application Form</h5>
             <a id="download-link" href="#" class="btn btn-primary mb-3" download>Download Loan Form</a>
+
+            <!-- Updated File Input -->
             <div class="mb-3">
-                <label for="loan-form-upload" class="form-label">Upload Completed Loan Form</label>
-                <input type="file" class="form-control" name="loan_form" id="loan-form-upload" required>
+                <label for="loan-pdf-upload" class="form-label">Upload Completed Loan Form</label>
+                <input type="file" class="form-control" name="loan_pdf" id="loan-pdf-upload" required>
             </div>
-            <input type="hidden" name="farmer_id" value="{{ farmer_profile.farmer_id }}">
+
+            <!-- Hidden Field for Farmer ID -->
+            <input type="hidden" name="farmer_id" value="{{ farmer.farmer_id }}">
             <button type="submit" class="btn btn-success">Submit Application</button>
         </div>
     </form>
 </div>
+
 
 
             <!-- Progress Section -->

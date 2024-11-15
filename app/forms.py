@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Farmer, Cooperative, FinancialInstitution
+from .models import Farmer, Cooperative, FinancialInstitution, LoanApplication
+
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
@@ -25,7 +26,9 @@ class FinancialInstitutionRegistrationForm(forms.ModelForm):
         model = FinancialInstitution
         fields = ['name', 'institution_type', 'phone_number', 'license_number', 'address', 'interest_rate_range']
 
-# class FarmerProfileForm(forms.ModelForm):
-#     class Meta:
-#         model = FarmerProfile
-#         fields = ['full_name', 'phone_number', 'farm_name', 'farm_location', 'farm_size', 'crop_type']
+
+
+class LoanApplicationForm(forms.ModelForm):
+    class Meta:
+        model = LoanApplication
+        fields = ['farmer', 'financial_institution', 'loan_pdf']

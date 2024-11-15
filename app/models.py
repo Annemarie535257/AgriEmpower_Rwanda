@@ -54,9 +54,11 @@ class LoanApplication(models.Model):
     loan_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE)
     financial_institution = models.ForeignKey(FinancialInstitution, on_delete=models.CASCADE)
-    loan_amount = models.DecimalField(max_digits=10, decimal_places=2)
     loan_status = models.CharField(max_length=20, default='Pending')
     submission_date = models.DateTimeField(auto_now_add=True)
+    loan_pdf = models.FileField(upload_to='loan_pdfs/', blank=True, null=True)  # New field
+
+
 
 class OTP(models.Model):
     email = models.CharField(max_length=255)  # Increased max_length to allow more characters

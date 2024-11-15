@@ -1,6 +1,7 @@
 import logging
 logger = logging.getLogger(__name__)
-
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.models import User
@@ -51,8 +52,35 @@ def farmer_dashboard(request):
     
     # Proceed with rendering the dashboard or handling other logic
     return render(request, 'farmer_dashboard.html', {'farmer': farmer})
+
 def financial_institution_dashboard(request):
-    return render(request, 'institution_dashboard.html')
+    # Get the logged-in user's financial institution (assuming the username is the institution name)
+    financial_institution_name = request.user.username
+    print(f"Logged-in User's Financial Institution: {financial_institution_name}")
+
+    # Print all users to verify data
+    all_users = [user.username for user in User.objects.all()]
+    print(f"All Registered Users: {all_users}")
+
+    # Fetch the financial institution object for the logged-in user
+    try:
+        financial_institution_obj = FinancialInstitution.objects.get(name__iexact=financial_institution_name)
+        print(f"Financial Institution Object Fetched: {financial_institution_obj.name}")
+    except FinancialInstitution.DoesNotExist:
+        print("Error: Financial Institution not found.")
+        return render(request, 'institution_dashboard.html', {'loan_applications': []})
+
+    # Fetch loan applications for this financial institution
+    loan_applications = LoanApplication.objects.filter(financial_institution=financial_institution_obj)
+    print(f"Number of Loan Applications Found: {loan_applications.count()}")
+
+    # Debug print each loan application found
+    for application in loan_applications:
+        print(f"Loan Application - Farmer: {application.farmer.full_name}, PDF: {application.loan_pdf.url if application.loan_pdf else 'No PDF'}")
+
+    # Pass the filtered loan applications to the template
+    return render(request, 'institution_dashboard.html', {'loan_applications': loan_applications})
+
 
 # Helper function to generate OTP expiration time
 def get_expiry_time():
@@ -363,49 +391,94 @@ def signin_financial_institution(request):
             
         else:
             messages.warning(request, "Invalid credentials or account is not active.")
-            return redirect("sign_financial_institution")
+            return redirect("signin_financial_institution")
 
     return render(request, "loginfin.html", {"form": None})
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import LoanApplication, Farmer, FinancialInstitution
 
 def apply_for_loan(request):
     if request.method == 'POST':
+        print("Form submission started.")
+
+        # Fetch form data
         farmer_id = request.POST.get('farmer_id')
         financial_institution = request.POST.get('financial_institution')
-        loan_form = request.FILES.get('loan_form')
+        loan_pdf = request.FILES.get('loan_pdf')
 
-        if not farmer_id or not financial_institution or not loan_form:
-            messages.error(request, "All fields are required.")
+        # Print debug information
+        print(f"Farmer ID: {farmer_id}")
+        print(f"Financial Institution: {financial_institution}")
+        print(f"Uploaded File: {loan_pdf}")
+
+        # Check if file and fields are received
+        if not farmer_id:
+            print("Farmer ID is missing.")
+            messages.error(request, "Farmer ID is required.")
+            return redirect('farmer_dashboard')
+
+        if not financial_institution:
+            print("Financial Institution is missing.")
+            messages.error(request, "Financial Institution is required.")
+            return redirect('farmer_dashboard')
+
+        if not loan_pdf:
+            print("File upload failed: No file received.")
+            messages.error(request, "Loan form (PDF) is required.")
+            return redirect('farmer_dashboard')
+
+        # Validate file type (optional but recommended)
+        if not loan_pdf.name.endswith('.pdf'):
+            print("Invalid file type.")
+            messages.error(request, "Only PDF files are allowed.")
             return redirect('farmer_dashboard')
 
         try:
-            # Get the farmer using farmer_id
+            # Fetch the farmer and financial institution
             farmer = Farmer.objects.get(farmer_id=farmer_id)
+            print("Farmer fetched successfully.")
 
-            # Assuming FinancialInstitution has a unique name
             financial_institution_obj = FinancialInstitution.objects.get(name=financial_institution)
+            print("Financial Institution fetched successfully.")
 
-            # Create a loan application
+            # Create loan application
             loan_application = LoanApplication.objects.create(
                 farmer=farmer,
                 financial_institution=financial_institution_obj,
-                loan_amount=5000,  # or capture this value from the form if needed
-                loan_status='Pending',
-                form_file=loan_form  # assuming LoanApplication model has a FileField for form_file
+                loan_pdf=loan_pdf,
+                loan_status='Pending'
             )
 
-            # Redirect back to farmer dashboard with a success query parameter
-            return redirect('farmer_dashboard') + '?loan_submitted=true'
+            # Print the file path after saving
+            print(f"File saved at: {loan_application.loan_pdf.path}")
+
+            # Redirect with success message
+            messages.success(request, "Loan application submitted successfully.")
+            return HttpResponseRedirect(reverse('farmer_dashboard') + '?loan_submitted=true')
+
 
         except Farmer.DoesNotExist:
+            print("Error: Farmer not found.")
             messages.error(request, "Farmer not found.")
             return redirect('farmer_dashboard')
 
         except FinancialInstitution.DoesNotExist:
+            print("Error: Financial Institution not found.")
             messages.error(request, "Selected financial institution not found.")
             return redirect('farmer_dashboard')
 
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            messages.error(request, "An unexpected error occurred.")
+            return redirect('farmer_dashboard')
+
+    print("Request method is not POST.")
     messages.error(request, "Invalid request method.")
     return redirect('farmer_dashboard')
+#In your Django view (views.py), add a function to fetch the relevant loan applications:
+# code for fectiong the loan applications and send them to institution_dashboard.html
+
 
 # Loan Application Response (Approve or Deny)
 @swagger_auto_schema(
