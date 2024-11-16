@@ -59,40 +59,43 @@ def farmer_dashboard(request):
     return render(request, 'farmer_dashboard.html', {'farmer': farmer})
 
 def financial_institution_dashboard(request):
-    # Get the logged-in user's financial institution (assuming the username is the institution name)
+    # Get the logged-in user's financial institution (using the username as the institution name)
     financial_institution_name = request.user.username
     print(f"Logged-in User's Financial Institution: {financial_institution_name}")
 
-    # Print all users to verify data
+    # Debug: List all registered users
     all_users = [user.username for user in User.objects.all()]
     print(f"All Registered Users: {all_users}")
 
-    # Fetch the financial institution object for the logged-in user
-    try:
-        financial_institution_obj = FinancialInstitution.objects.get(name__iexact=financial_institution_name)
-        print(f"Financial Institution Object Fetched: {financial_institution_obj.name}")
-    except FinancialInstitution.DoesNotExist:
-        print("Error: Financial Institution not found.")
-        return render(request, 'institution_dashboard.html', {'loan_applications': [], 'coop_loan_applications': []})
+    # Fetch the financial institution object associated with the logged-in user
+    financial_institution_obj = get_object_or_404(FinancialInstitution, name__iexact=financial_institution_name)
+    print(f"Financial Institution Object Fetched: {financial_institution_obj.name}")
 
-    # Fetch loan applications from farmers
+    # Fetch loan applications submitted by farmers
     farmer_loan_applications = LoanApplication.objects.filter(financial_institution=financial_institution_obj)
     print(f"Number of Farmer Loan Applications Found: {farmer_loan_applications.count()}")
 
-    # Fetch loan applications from cooperatives
+    # Fetch loan applications submitted by cooperatives
     cooperative_loan_applications = LoanApplicationCooperative.objects.filter(financial_institution=financial_institution_obj)
     print(f"Number of Cooperative Loan Applications Found: {cooperative_loan_applications.count()}")
 
-    # Debug print each farmer loan application found
-    for application in farmer_loan_applications:
-        print(f"Farmer Loan Application - Farmer: {application.farmer.full_name}, PDF: {application.loan_pdf.url if application.loan_pdf else 'No PDF'}")
+    # Debug: Print details of farmer loan applications
+    if farmer_loan_applications.exists():
+        for application in farmer_loan_applications:
+            print(f"Farmer Loan Application - Farmer: {application.farmer.full_name}, PDF: {application.loan_pdf.url if application.loan_pdf else 'No PDF'}")
+    else:
+        print("No farmer loan applications found.")
 
-    # Debug print each cooperative loan application found
-    for coop_application in cooperative_loan_applications:
-        print(f"Cooperative Loan Application - Cooperative: {coop_application.cooperative.name}, PDF: {coop_application.loan_pdf.url if coop_application.loan_pdf else 'No PDF'}")
+    # Debug: Print details of cooperative loan applications
+    if cooperative_loan_applications.exists():
+        for coop_application in cooperative_loan_applications:
+            print(f"Cooperative Loan Application - Cooperative: {coop_application.cooperative.name}, PDF: {coop_application.loan_pdf.url if coop_application.loan_pdf else 'No PDF'}")
+    else:
+        print("No cooperative loan applications found.")
 
-    # Pass the filtered loan applications to the template
+    # Context data for the template
     context = {
+        'financial_institution': financial_institution_obj,
         'farmer_loan_applications': farmer_loan_applications,
         'cooperative_loan_applications': cooperative_loan_applications,
     }
@@ -687,3 +690,74 @@ def update_farmer_profile(request):
 
     messages.error(request, "Invalid request method.")
     return redirect('farmer_dashboard')
+
+def update_cooperative_profile(request):
+    if request.method == 'POST':
+        user = request.user
+        cooperative = Cooperative.objects.get(user=user)
+
+        # Update Cooperative profile fields
+        cooperative.name = request.POST.get('name', cooperative.name)
+        cooperative.phone_number = request.POST.get('phone_number', cooperative.phone_number)
+        cooperative.location = request.POST.get('location', cooperative.location)
+        cooperative.registration_number = request.POST.get('registration_number', cooperative.registration_number)
+        cooperative.number_of_members = request.POST.get('number_of_members', cooperative.number_of_members)
+        cooperative.performance_status = request.POST.get('performance_status', cooperative.performance_status)
+
+        # Update password if provided
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if new_password and confirm_password:
+            if new_password == confirm_password:
+                user.set_password(new_password)
+                user.save()
+                update_session_auth_hash(request, user)  # Keeps the user logged in after password change
+                messages.success(request, "Password updated successfully.")
+            else:
+                messages.error(request, "Passwords do not match.")
+                return redirect('cooperative_dashboard')
+
+        # Save cooperative profile updates
+        cooperative.save()
+        messages.success(request, "Profile updated successfully.")
+        return redirect('cooperative_dashboard')
+
+    messages.error(request, "Invalid request method.")
+    return redirect('cooperative_dashboard')
+
+def update_financial_institution_profile(request):
+    if request.method == 'POST':
+        user = request.user
+        financial_institution = FinancialInstitution.objects.get(user=user)
+
+        # Update Financial Institution profile fields
+        financial_institution.name = request.POST.get('name', financial_institution.name)
+        financial_institution.email = request.POST.get('email', financial_institution.email)
+        financial_institution.institution_type = request.POST.get('institution_type', financial_institution.institution_type)
+        financial_institution.phone_number = request.POST.get('phone_number', financial_institution.phone_number)
+        financial_institution.license_number = request.POST.get('license_number', financial_institution.license_number)
+        financial_institution.address = request.POST.get('address', financial_institution.address)
+        financial_institution.interest_rate_range = request.POST.get('interest_rate_range', financial_institution.interest_rate_range)
+
+        # Update password if provided
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if new_password and confirm_password:
+            if new_password == confirm_password:
+                user.set_password(new_password)
+                user.save()
+                update_session_auth_hash(request, user)  # Keeps the user logged in after password change
+                messages.success(request, "Password updated successfully.")
+            else:
+                messages.error(request, "Passwords do not match.")
+                return redirect('financial_institution_dashboard')
+
+        # Save financial institution profile updates
+        financial_institution.save()
+        messages.success(request, "Profile updated successfully.")
+        return redirect('financial_institution_dashboard')
+
+    messages.error(request, "Invalid request method.")
+    return redirect('financial_institution_dashboard')

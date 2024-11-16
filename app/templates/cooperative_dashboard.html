@@ -644,28 +644,32 @@
 </div>
 
 <div id="profile-section" class="content-section">
-    <h4>Update Profile</h4>
+    <h4>Update Cooperative Profile</h4>
     <form method="post">
         {% csrf_token %}
         <div class="mb-3">
-            <label for="full_name" class="form-label">Full Name</label>
-            <input type="text" class="form-control" name="full_name" value="{{ farmer.full_name }}" required>
+            <label for="name" class="form-label">Cooperative Name</label>
+            <input type="text" class="form-control" name="name" value="{{ cooperative.name }}" required>
         </div>
         <div class="mb-3">
             <label for="phone_number" class="form-label">Phone Number</label>
-            <input type="text" class="form-control" name="phone_number" value="{{ farmer.phone_number }}" required>
+            <input type="text" class="form-control" name="phone_number" value="{{ cooperative.phone_number }}" required>
         </div>
         <div class="mb-3">
-            <label for="farm_location" class="form-label">Farm Location</label>
-            <input type="text" class="form-control" name="farm_location" value="{{ farmer.farm_location }}" required>
+            <label for="location" class="form-label">Location</label>
+            <input type="text" class="form-control" name="location" value="{{ cooperative.location }}" required>
         </div>
         <div class="mb-3">
-            <label for="crop_type" class="form-label">Crop Type</label>
-            <input type="text" class="form-control" name="crop_type" value="{{ farmer.crop_type }}" required>
+            <label for="registration_number" class="form-label">Registration Number</label>
+            <input type="text" class="form-control" name="registration_number" value="{{ cooperative.registration_number }}" required>
         </div>
         <div class="mb-3">
-            <label for="farm_size" class="form-label">Farm Size (in hectares)</label>
-            <input type="number" class="form-control" name="farm_size" value="{{ farmer.farm_size }}" required>
+            <label for="number_of_members" class="form-label">Number of Members</label>
+            <input type="number" class="form-control" name="number_of_members" value="{{ cooperative.number_of_members }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="performance_status" class="form-label">Performance Status</label>
+            <input type="text" class="form-control" name="performance_status" value="{{ cooperative.performance_status }}" required>
         </div>
 
 <!-- Password Update Section -->
