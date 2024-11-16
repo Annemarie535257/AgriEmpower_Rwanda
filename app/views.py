@@ -14,6 +14,7 @@ from rest_framework.permissions import AllowAny
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
+from django.contrib.auth import update_session_auth_hash
 import json
 import random
 import uuid
@@ -653,3 +654,36 @@ def logout_view(request):
         messages.error(request, "An error occurred during logout. Please try again later.")
         return redirect('homepage')
 
+def update_farmer_profile(request):
+    if request.method == 'POST':
+        user = request.user
+        farmer = Farmer.objects.get(user=user)
+
+        # Update Farmer profile fields
+        farmer.full_name = request.POST.get('full_name', farmer.full_name)
+        farmer.phone_number = request.POST.get('phone_number', farmer.phone_number)
+        farmer.farm_location = request.POST.get('farm_location', farmer.farm_location)
+        farmer.crop_type = request.POST.get('crop_type', farmer.crop_type)
+        farmer.farm_size = request.POST.get('farm_size', farmer.farm_size)
+
+        # Update password if provided
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if new_password and confirm_password:
+            if new_password == confirm_password:
+                user.set_password(new_password)
+                user.save()
+                update_session_auth_hash(request, user)  # Keeps the user logged in after password change
+                messages.success(request, "Password updated successfully.")
+            else:
+                messages.error(request, "Passwords do not match.")
+                return redirect('farmer_dashboard')
+
+        # Save farmer profile updates
+        farmer.save()
+        messages.success(request, "Profile updated successfully.")
+        return redirect('farmer_dashboard')
+
+    messages.error(request, "Invalid request method.")
+    return redirect('farmer_dashboard')

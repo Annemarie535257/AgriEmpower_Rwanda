@@ -177,6 +177,137 @@
             align-items: center;
             justify-content: center;
         }
+                /* Help and Support Section Styling */
+#settings-section {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Headings */
+#settings-section h4 {
+    font-weight: 700;
+    color: #2E8B57;
+}
+
+#settings-section h5 {
+    font-weight: 600;
+    color: #333;
+}
+
+/* List Styling for Account Management */
+#settings-section ul {
+    padding-left: 0;
+    list-style-type: none;
+}
+
+#settings-section ul li {
+    padding: 10px 0;
+}
+
+#settings-section ul li a {
+    color: #2E8B57;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+#settings-section ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Card Styling for Help Categories */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    background-color: #f8f9fa;
+}
+
+.card h6 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2E8B57;
+}
+
+.card ul {
+    padding-left: 0;
+    list-style-type: none;
+}
+
+.card ul li {
+    padding: 5px 0;
+}
+
+.card ul li a {
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.card ul li a:hover {
+    color: #2E8B57;
+    text-decoration: underline;
+}
+
+/* Search Bar Styling */
+#help-search {
+    border-radius: 8px;
+    border: 2px solid #2E8B57;
+    padding: 10px;
+    font-size: 14px;
+}
+
+#help-search:focus {
+    border-color: #2E8B57;
+    box-shadow: 0 0 8px rgba(46, 139, 87, 0.5);
+}
+
+/* Form for Submitting Questions */
+#contact-form textarea {
+    border-radius: 8px;
+    border: 2px solid #2E8B57;
+    padding: 10px;
+    font-size: 14px;
+}
+
+#contact-form textarea:focus {
+    border-color: #2E8B57;
+    box-shadow: 0 0 8px rgba(46, 139, 87, 0.5);
+}
+
+#contact-form button {
+    background-color: #2E8B57;
+    color: #ffffff;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+}
+
+#contact-form button:hover {
+    background-color: #28a745;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 20px;
+    }
+
+    #help-search {
+        font-size: 13px;
+        padding: 8px;
+    }
+
+    #contact-form button {
+        width: 100%;
+    }
+}
+
     </style>
 </head>
 
@@ -196,8 +327,8 @@
                 </ul>
             </div>
             <ul>
-                <li><a href="#"><i class="bi bi-person-fill"></i> Profile</a></li>
-                <li><a href="#"><i class="bi bi-gear-fill"></i> Settings</a></li>
+                <li><a href="#" id="profile-link"><i class="bi bi-person-fill"></i> Profile</a></li>
+                <li><a href="#" id="settings-link"><i class="bi bi-gear-fill"></i> Settings</a></li>
                 <li><a href="{% url 'logout' %}" class="text-danger"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
             </ul>
         </div>
@@ -417,6 +548,117 @@
     </div>
 </div>
 
+<div id="profile-section" class="content-section">
+    <h4>Update Profile</h4>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="full_name" class="form-label">Full Name</label>
+            <input type="text" class="form-control" name="full_name" value="{{ farmer.full_name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="phone_number" class="form-label">Phone Number</label>
+            <input type="text" class="form-control" name="phone_number" value="{{ farmer.phone_number }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="farm_location" class="form-label">Farm Location</label>
+            <input type="text" class="form-control" name="farm_location" value="{{ farmer.farm_location }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="crop_type" class="form-label">Crop Type</label>
+            <input type="text" class="form-control" name="crop_type" value="{{ farmer.crop_type }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="farm_size" class="form-label">Farm Size (in hectares)</label>
+            <input type="number" class="form-control" name="farm_size" value="{{ farmer.farm_size }}" required>
+        </div>
+
+<!-- Password Update Section -->
+<h5>Change Password</h5>
+<div class="mb-3">
+<label for="new_password" class="form-label">New Password</label>
+<input type="password" class="form-control" name="new_password" placeholder="Enter new password">
+</div>
+<div class="mb-3">
+<label for="confirm_password" class="form-label">Confirm Password</label>
+<input type="password" class="form-control" name="confirm_password" placeholder="Confirm new password">
+</div>
+
+<button type="submit" class="btn btn-primary">Update Profile</button>
+</form>
+</div>
+
+
+<!-- Settings Section -->
+<div id="settings-section" class="content-section">
+<h4>Settings</h4>
+
+<!-- Account Management -->
+<div class="mb-4">
+<h5>Account Management</h5>
+<ul class="list-unstyled">
+<li><a href="" class="text-danger">Delete Account</a></li>
+</ul>
+</div>
+
+<!-- Help and Support Section -->
+<div class="mb-4">
+<h5>Help and Support</h5>
+
+<!-- Search Bar for Help Topics -->
+<div class="mb-3">
+<input type="text" id="help-search" class="form-control" placeholder="Search help topics...">
+</div>
+
+<!-- Help Categories -->
+<div class="row">
+<!-- Getting Started -->
+<div class="col-md-4 mb-3">
+    <div class="card">
+        <div class="card-body">
+            <h6 class="card-title">Getting Started</h6>
+            <ul class="list-unstyled">
+                <li><a href="#">Quick Start Guide</a></li>
+                <li><a href="#">Registering Your Farm</a></li>
+                <li><a href="#">Applying for a Loan</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Technical Support -->
+<div class="col-md-4 mb-3">
+    <div class="card">
+        <div class="card-body">
+            <h6 class="card-title">Technical Support</h6>
+            <ul class="list-unstyled">
+                <li><a href="#">Troubleshooting Guide</a></li>
+                <li><a href="#">Frequently Asked Questions</a></li>
+                <li><a href="#">Contact Support</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Contact Us -->
+<div class="col-md-4 mb-3">
+    <div class="card">
+        <div class="card-body">
+            <h6 class="card-title">Contact Us</h6>
+            <form method="post" action="">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <textarea class="form-control" name="question" placeholder="Ask a question..." rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+
 
             </div>
 
@@ -451,6 +693,14 @@
 
         document.getElementById("loan-applications-link").addEventListener("click", function () {
             showSection("loan-applications-section");
+        });
+
+        document.getElementById("profile-link").addEventListener("click", function () {
+            showSection("profile-section");
+        });
+
+        document.getElementById("settings-link").addEventListener("click", function () {
+            showSection("settings-section");
         });
 
         function showSection(sectionId) {
