@@ -345,17 +345,21 @@
 <!-- Loan Applications Section -->
 <div id="loan-applications-section" class="content-section">
     <h5>Loan Applications</h5>
-    <div class="table-responsive">
+
+    <!-- Farmer Loan Applications -->
+    <h6>Farmer Loan Applications</h6>
+    <div class="table-responsive mb-4">
         <table class="table align-middle">
             <thead class="table-light">
                 <tr>
-                    <th>Applicant Name</th>
+                    <th>Farmer Name</th>
                     <th>Download Application</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                {% if loan_applications.exists %}
-                    {% for application in loan_applications %}
+                {% if farmer_loan_applications.exists %}
+                    {% for application in farmer_loan_applications %}
                         <tr>
                             <td>{{ application.farmer.full_name }}</td>
                             <td>
@@ -365,11 +369,47 @@
                                     <span class="text-muted">No PDF uploaded</span>
                                 {% endif %}
                             </td>
+                            <td>{{ application.loan_status }}</td>
                         </tr>
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td colspan="2" class="text-center">No loan applications found for your institution.</td>
+                        <td colspan="3" class="text-center">No farmer loan applications found.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Cooperative Loan Applications -->
+    <h6>Cooperative Loan Applications</h6>
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Cooperative Name</th>
+                    <th>Download Application</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if cooperative_loan_applications.exists %}
+                    {% for coop_application in cooperative_loan_applications %}
+                        <tr>
+                            <td>{{ coop_application.cooperative.name }}</td>
+                            <td>
+                                {% if coop_application.loan_pdf %}
+                                    <a href="{{ coop_application.loan_pdf.url }}" download class="btn btn-outline-primary btn-sm">Download</a>
+                                {% else %}
+                                    <span class="text-muted">No PDF uploaded</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ coop_application.loan_status }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="3" class="text-center">No cooperative loan applications found.</td>
                     </tr>
                 {% endif %}
             </tbody>

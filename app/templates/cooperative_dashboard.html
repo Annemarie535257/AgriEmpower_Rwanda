@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -64,7 +65,7 @@
     color: #ffffff;
     text-decoration: none;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 14px;
     display: flex;
     align-items: center;
     border-radius: 10px;
@@ -476,30 +477,40 @@
                 </table>
             </div>
 
-            <!-- Loan Applications Section -->
-            <div id="loan-applications-section" class="content-section">
-                <h4>Loan Applications</h4>
-                <div class="mb-4">
-                    <label for="bank-selection" class="form-label">Select a Bank</label>
-                    <select class="form-select" id="bank-selection" onchange="displayForm()">
-                        <option value="" selected disabled>Select Bank</option>
-                        <option value="bk">Bank of Kigali</option>
-                        <option value="im">I&M Bank Rwanda</option>
-                        <option value="eq">Equity Bank Rwanda</option>
-                    </select>
-                </div>
-                <div id="loan-form-section" style="display: none;">
-                    <h5 class="mb-3">Download and Upload Loan Application Form</h5>
-                    <a id="download-link" href="#" class="btn btn-primary mb-3" download>Download Loan Form</a>
-                    <form>
-                        <div class="mb-3">
-                            <label for="loan-form-upload" class="form-label">Upload Completed Loan Form</label>
-                            <input type="file" class="form-control" id="loan-form-upload">
-                        </div>
-                        <button type="submit" class="btn btn-success">Submit Application</button>
-                    </form>
-                </div>
+<!-- Loan Applications Section -->
+<div id="loan-applications-section" class="content-section">
+    <h4>Loan Applications</h4>
+    <form method="post" action="{% url 'apply_for_loan_cooperative' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <!-- Bank Selection -->
+        <div class="mb-4">
+            <label for="financial-institution" class="form-label">Select a Bank</label>
+            <select class="form-select" name="financial_institution" id="bank-selection" onchange="displayForm()" required>
+                <option value="" selected disabled>Select Bank</option>
+                <option value="Bank of Kigali">Bank of Kigali</option>
+                <option value="I&M Bank Rwanda">I&M Bank Rwanda</option>
+                <option value="Equity Bank Rwanda">Equity Bank Rwanda</option>
+            </select>
+        </div>
+
+        <!-- Loan Form Upload Section -->
+        <div id="loan-form-section" style="display: none;">
+            <h5 class="mb-3">Download and Upload Loan Application Form</h5>
+            <a id="download-link" href="#" class="btn btn-primary mb-3" download>Download Loan Form</a>
+
+            <!-- Updated File Input -->
+            <div class="mb-3">
+                <label for="loan-pdf-upload" class="form-label">Upload Completed Loan Form</label>
+                <input type="file" class="form-control" name="loan_pdf" id="loan-pdf-upload" required>
             </div>
+
+            <!-- Hidden Field for Farmer ID -->
+            <input type="hidden" name="coop_id" value="{{ cooperative.coop_id }}">
+            <button type="submit" class="btn btn-success">Submit Application</button>
+        </div>
+    </form>
+</div>
 
             <!-- Loan Application Progress Section -->
             <div id="progress-section" class="content-section">
@@ -543,12 +554,48 @@
             showSection("loan-applications-section");
         });
 
+        // document.getElementById("progress-link").addEventListener("click", function () {
+        //     showSection("progress-section");
+        // });
+
+        document.getElementById("profile-link").addEventListener("click", function () {
+            showSection("profile-section");
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('loan_submitted') === 'true') {
+            alert('Loan application submitted successfully and is under review.');
+        }
+        });
+
+
         function showSection(sectionId) {
             document.querySelectorAll(".content-section").forEach(function (section) {
                 section.classList.remove("active-section");
             });
             document.getElementById(sectionId).classList.add("active-section");
         }
+
+        function updateProgress(status) {
+
+           // Update progress tracker based on loan status
+           if (status === 'submitted') {
+            document.getElementById('step1').classList.add('active');
+           } else if (status === 'under_review') {
+            document.getElementById('step1').classList.add('active');
+            document.getElementById('bar1').style.backgroundColor = '#2E8B57';
+            document.getElementById('step2').classList.add('active');
+           } else if (status === 'approved' || status === 'rejected') {
+            document.getElementById('step1').classList.add('active');
+            document.getElementById('bar1').style.backgroundColor = '#2E8B57';
+            document.getElementById('step2').classList.add('active');
+            document.getElementById('bar2').style.backgroundColor = '#2E8B57';
+            document.getElementById('step3').classList.add('active');
+           }
+        }
+        updateProgress('submitted');
+
 
         function displayForm() {
             var selectedBank = document.getElementById("bank-selection").value;

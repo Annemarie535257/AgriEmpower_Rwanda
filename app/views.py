@@ -44,7 +44,11 @@ def select_view(request):
     return render(request, 'select.html')
 
 def cooperative_dashboard(request):
-    return render(request, 'cooperative_dashboard.html')
+
+    cooperative = get_object_or_404(Cooperative, user=request.user)
+    print(f"DEBUG: cooperative object: {cooperative}, coop_id: {cooperative.coop_id}")
+
+    return render(request, 'cooperative_dashboard.html', {'cooperative': cooperative})
 
 def farmer_dashboard(request):
     # Assuming the user is already authenticated, fetch the farmer profile from the user
@@ -68,18 +72,31 @@ def financial_institution_dashboard(request):
         print(f"Financial Institution Object Fetched: {financial_institution_obj.name}")
     except FinancialInstitution.DoesNotExist:
         print("Error: Financial Institution not found.")
-        return render(request, 'institution_dashboard.html', {'loan_applications': []})
+        return render(request, 'institution_dashboard.html', {'loan_applications': [], 'coop_loan_applications': []})
 
-    # Fetch loan applications for this financial institution
-    loan_applications = LoanApplication.objects.filter(financial_institution=financial_institution_obj)
-    print(f"Number of Loan Applications Found: {loan_applications.count()}")
+    # Fetch loan applications from farmers
+    farmer_loan_applications = LoanApplication.objects.filter(financial_institution=financial_institution_obj)
+    print(f"Number of Farmer Loan Applications Found: {farmer_loan_applications.count()}")
 
-    # Debug print each loan application found
-    for application in loan_applications:
-        print(f"Loan Application - Farmer: {application.farmer.full_name}, PDF: {application.loan_pdf.url if application.loan_pdf else 'No PDF'}")
+    # Fetch loan applications from cooperatives
+    cooperative_loan_applications = LoanApplicationCooperative.objects.filter(financial_institution=financial_institution_obj)
+    print(f"Number of Cooperative Loan Applications Found: {cooperative_loan_applications.count()}")
+
+    # Debug print each farmer loan application found
+    for application in farmer_loan_applications:
+        print(f"Farmer Loan Application - Farmer: {application.farmer.full_name}, PDF: {application.loan_pdf.url if application.loan_pdf else 'No PDF'}")
+
+    # Debug print each cooperative loan application found
+    for coop_application in cooperative_loan_applications:
+        print(f"Cooperative Loan Application - Cooperative: {coop_application.cooperative.name}, PDF: {coop_application.loan_pdf.url if coop_application.loan_pdf else 'No PDF'}")
 
     # Pass the filtered loan applications to the template
-    return render(request, 'institution_dashboard.html', {'loan_applications': loan_applications})
+    context = {
+        'farmer_loan_applications': farmer_loan_applications,
+        'cooperative_loan_applications': cooperative_loan_applications,
+    }
+
+    return render(request, 'institution_dashboard.html', context)
 
 
 # Helper function to generate OTP expiration time
@@ -396,7 +413,7 @@ def signin_financial_institution(request):
     return render(request, "loginfin.html", {"form": None})
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import LoanApplication, Farmer, FinancialInstitution
+from .models import LoanApplication, Farmer, FinancialInstitution, LoanApplicationCooperative
 
 def apply_for_loan(request):
     if request.method == 'POST':
@@ -476,8 +493,90 @@ def apply_for_loan(request):
     print("Request method is not POST.")
     messages.error(request, "Invalid request method.")
     return redirect('farmer_dashboard')
-#In your Django view (views.py), add a function to fetch the relevant loan applications:
-# code for fectiong the loan applications and send them to institution_dashboard.html
+
+# Loan application view for the cooperatives
+
+def apply_for_loan_cooperative(request):
+    if request.method == 'POST':
+        print("POST data:", request.POST)
+        print("Form submission started.")
+
+        # Fetch form data
+        coop_id = request.POST.get('coop_id')
+        financial_institution_name = request.POST.get('financial_institution')
+        loan_pdf = request.FILES.get('loan_pdf')
+
+        # Print debug information
+        print(f"Cooperative ID: {coop_id}")
+        print(f"Financial Institution: {financial_institution_name}")
+        print(f"Uploaded File: {loan_pdf}")
+
+        # Validate form data
+        if not coop_id:
+            print("Cooperative ID is missing.")
+            messages.error(request, "Cooperative ID is required.")
+            return redirect('cooperative_dashboard')
+
+        if not financial_institution_name:
+            print("Financial Institution is missing.")
+            messages.error(request, "Financial institution is required.")
+            return redirect('cooperative_dashboard')
+
+        if not loan_pdf:
+            print("File upload failed: No file received.")
+            messages.error(request, "Loan form (PDF) is required.")
+            return redirect('cooperative_dashboard')
+
+        if not loan_pdf.name.endswith('.pdf'):
+            print("Invalid file type.")
+            messages.error(request, "Only PDF files are allowed.")
+            return redirect('cooperative_dashboard')
+
+        try:
+            # Fetch the cooperative and financial institution objects
+            cooperative = Cooperative.objects.get(coop_id=coop_id)
+            print("Cooperative fetched successfully.")
+
+            financial_institution_obj = FinancialInstitution.objects.get(name=financial_institution_name)
+            print("Financial Institution fetched successfully.")
+
+            # Create loan application for cooperative
+            loan_application = LoanApplicationCooperative.objects.create(
+                cooperative=cooperative,
+                financial_institution=financial_institution_obj,
+                loan_pdf=loan_pdf,
+                loan_status='Pending'
+            )
+
+            # Print the file path after saving
+            print(f"File saved at: {loan_application.loan_pdf.path}")
+
+            # Redirect with success message
+            messages.success(request, "Loan application submitted successfully.")
+            return HttpResponseRedirect(reverse('cooperative_dashboard') + '?loan_submitted=true')
+
+        except Cooperative.DoesNotExist:
+            print("Error: Cooperative not found.")
+            messages.error(request, "Cooperative not found.")
+            return redirect('cooperative_dashboard')
+
+        except FinancialInstitution.DoesNotExist:
+            print("Error: Financial Institution not found.")
+            messages.error(request, "Selected financial institution not found.")
+            return redirect('cooperative_dashboard')
+
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            messages.error(request, f"An unexpected error occurred: {e}")
+            return redirect('cooperative_dashboard')
+        
+    print("Request method is not POST.")
+    messages.error(request, "Invalid request method.")
+    return redirect('farmer_dashboard')
+
+    
+
+
 
 
 # Loan Application Response (Approve or Deny)

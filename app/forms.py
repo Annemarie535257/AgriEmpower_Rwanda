@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Farmer, Cooperative, FinancialInstitution, LoanApplication
+from .models import Farmer, Cooperative, FinancialInstitution, LoanApplication, LoanApplicationCooperative
 
 
 class UserRegistrationForm(forms.ModelForm):
@@ -32,3 +32,8 @@ class LoanApplicationForm(forms.ModelForm):
     class Meta:
         model = LoanApplication
         fields = ['farmer', 'financial_institution', 'loan_pdf']
+
+class LoanApplicationCooperativeForm(forms.ModelForm):
+    class Meta:
+        model = LoanApplicationCooperative
+        fields = ['cooperative', 'financial_institution', 'loan_pdf']

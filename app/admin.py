@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Farmer, Cooperative, FinancialInstitution, LoanApplication, OTP
+from .models import Farmer, Cooperative, FinancialInstitution, LoanApplication, OTP, LoanApplicationCooperative
 from django.utils.html import format_html
 
 @admin.register(Farmer)
@@ -30,6 +30,18 @@ class LoanApplicationAdmin(admin.ModelAdmin):
         if obj.loan_pdf:
             return format_html('<a href="{}">Download pdf</a>', obj.loan_pdf.url)
         return 'No pdf'
+    
+@admin.register(LoanApplicationCooperative)
+class LoanApplicationCooperativeAdmin(admin.ModelAdmin):
+    list_display = ('loan_id', 'cooperative', 'financial_institution','loan_pdf', 'loan_status', 'submission_date')
+    search_fields = ('loan_id', 'cooperative__name', 'financial_institution__name')
+    list_filter = ('loan_status', 'submission_date')
+
+    def loan_pdf(self, obj):
+        if obj.loan_pdf:
+            return format_html('<a href="{}">Download pdf</a>', obj.loan_pdf.url)
+        return 'No pdf'
+
 
 @admin.register(OTP)
 class OTPAdmin(admin.ModelAdmin):

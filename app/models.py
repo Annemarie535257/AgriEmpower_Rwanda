@@ -58,6 +58,14 @@ class LoanApplication(models.Model):
     submission_date = models.DateTimeField(auto_now_add=True)
     loan_pdf = models.FileField(upload_to='loan_pdfs/', blank=True, null=True)  # New field
 
+class LoanApplicationCooperative(models.Model):
+    loan_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    cooperative = models.ForeignKey(Cooperative, on_delete=models.CASCADE)
+    financial_institution = models.ForeignKey(FinancialInstitution, on_delete=models.CASCADE)
+    loan_status = models.CharField(max_length=20, default='Pending')
+    submission_date = models.DateTimeField(auto_now_add=True)
+    loan_pdf = models.FileField(upload_to='loan_pdfs/', blank=True, null=True)  # New field
+
 
 
 class OTP(models.Model):
