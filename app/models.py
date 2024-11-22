@@ -51,21 +51,42 @@ class FinancialInstitution(models.Model):
         return self.name
 
 class LoanApplication(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Review', 'Review'),
+        ('Approved', 'Approved'),
+        ('Rejected', 'Rejected'),
+    ]
+     
     loan_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     farmer = models.ForeignKey(Farmer, on_delete=models.CASCADE)
     financial_institution = models.ForeignKey(FinancialInstitution, on_delete=models.CASCADE)
-    loan_status = models.CharField(max_length=20, default='Pending')
+    loan_status = models.CharField(max_length=50, default='Pending')
     submission_date = models.DateTimeField(auto_now_add=True)
     loan_pdf = models.FileField(upload_to='loan_pdfs/', blank=True, null=True)  # New field
 
+    # def __str__(self):
+    #     return f"Farmer Loan #{self.id} - {self.farmer.name}"
+
+print(LoanApplication.objects.values('loan_id', 'loan_status'))  # Debugging in views
+
 class LoanApplicationCooperative(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Review', 'Review'),
+        ('Approved', 'Approved'),
+        ('Rejected', 'Rejected'),
+    ]
     loan_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     cooperative = models.ForeignKey(Cooperative, on_delete=models.CASCADE)
     financial_institution = models.ForeignKey(FinancialInstitution, on_delete=models.CASCADE)
-    loan_status = models.CharField(max_length=20, default='Pending')
+    loan_status = models.CharField(max_length=50, default='Pending')
     submission_date = models.DateTimeField(auto_now_add=True)
     loan_pdf = models.FileField(upload_to='loan_pdfs/', blank=True, null=True)  # New field
-
+    
+    # def __str__(self):
+    #     return f"Cooperative Loan #{self.id} - {self.cooperative.name}"
 
 
 class OTP(models.Model):

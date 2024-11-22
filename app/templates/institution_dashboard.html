@@ -1,824 +1,935 @@
-{% load static%}
-<!DOCTYPE html>
-<html lang="en">
+    {% load static%}
+    <!DOCTYPE html>
+    <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Institution Dashboard | AgriEmpower</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        /* Styling */
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Poppins', sans-serif;
-        }
-        .table {
-    border-collapse: separate;
-    border-spacing: 0 10px;
-}
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Institution Dashboard | AgriEmpower</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-.btn-outline-primary {
-    border-radius: 20px;
-    padding: 5px 12px;
-}
-
-
-.logo-img {
-    width: 100%;
-    max-width: 200px; /* Adjust this value as needed */
-    height: auto;
-    display: block;
-    margin: 0 auto 20px auto; /* Centers the image and adds bottom margin */
-}
-
-     
-/* Sidebar Container */
-.sidebar {
-    width: 250px;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: #2E8B57;
-    border-radius: 15px;
-    padding: 20px;
-    color: #ffffff;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-/* Sidebar Top Section */
-.sidebar-top {
-    flex-grow: 1;
-}
-
-/* Sidebar Bottom Section */
-.sidebar-bottom {
-    margin-top: auto;
-}
-
-/* Sidebar Links */
-.sidebar ul {
-    list-style-type: none;
-    padding-left: 0;
-}
-
-.sidebar ul li {
-    padding: 10px 0;
-}
-
-.sidebar ul li a {
-    color: #ffffff;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    border-radius: 10px;
-    padding: 10px;
-    transition: all 0.3s ease;
-}
-
-.sidebar ul li a:hover {
-    background-color: #c4e750;
-    color: #ffffff;
-}
-
-.sidebar ul li a i {
-    margin-right: 10px;
-}
-
-
-        .main-content {
-            margin-left: 250px;
-            padding: 20px;
-        }
-
-        .navbar {
-            background-color: #ffffff;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar .dropdown-toggle img {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-        }
-
-        .content-section {
-            display: none;
-        }
-
-        .active-section {
-            display: block;
-        }
-
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .card h5 {
-            font-weight: 600;
-        }
-
-        .card .card-text {
-            color: #6c757d;
-        }
-
-        .table {
-            margin-top: 20px;
-            border: 1px solid #ddd;
-        }
-
-        .table th, .table td {
-            text-align: left;
-            padding: 8px;
-        }
-
-        .table th {
-            background-color: #2E8B57;
-            color: white;
-        }
-
-        .progress-step {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .progress-bar {
-            flex-grow: 1;
-            height: 4px;
-            background-color: #ccc;
-            margin: 0 10px;
-        }
-
-        .progress-step.active .step-number {
-            background-color: #2E8B57;
-            color: white;
-        }
-
-        .step-number {
-            width: 30px;
-            height: 30px;
-            background-color: #ccc;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-                /* Help and Support Section Styling */
-#settings-section {
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-/* Headings */
-#settings-section h4 {
-    font-weight: 700;
-    color: #2E8B57;
-}
-
-#settings-section h5 {
-    font-weight: 600;
-    color: #333;
-}
-
-/* List Styling for Account Management */
-#settings-section ul {
-    padding-left: 0;
-    list-style-type: none;
-}
-
-#settings-section ul li {
-    padding: 10px 0;
-}
-
-#settings-section ul li a {
-    color: #2E8B57;
-    font-weight: 500;
-    text-decoration: none;
-}
-
-#settings-section ul li a:hover {
-    text-decoration: underline;
-}
-
-/* Card Styling for Help Categories */
-.card {
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    background-color: #f8f9fa;
-}
-
-.card h6 {
-    font-size: 16px;
-    font-weight: 600;
-    color: #2E8B57;
-}
-
-.card ul {
-    padding-left: 0;
-    list-style-type: none;
-}
-
-.card ul li {
-    padding: 5px 0;
-}
-
-.card ul li a {
-    color: #333;
-    text-decoration: none;
-    font-size: 14px;
-}
-
-.card ul li a:hover {
-    color: #2E8B57;
-    text-decoration: underline;
-}
-
-/* Search Bar Styling */
-#help-search {
-    border-radius: 8px;
-    border: 2px solid #2E8B57;
-    padding: 10px;
-    font-size: 14px;
-}
-
-#help-search:focus {
-    border-color: #2E8B57;
-    box-shadow: 0 0 8px rgba(46, 139, 87, 0.5);
-}
-
-/* Form for Submitting Questions */
-#contact-form textarea {
-    border-radius: 8px;
-    border: 2px solid #2E8B57;
-    padding: 10px;
-    font-size: 14px;
-}
-
-#contact-form textarea:focus {
-    border-color: #2E8B57;
-    box-shadow: 0 0 8px rgba(46, 139, 87, 0.5);
-}
-
-#contact-form button {
-    background-color: #2E8B57;
-    color: #ffffff;
-    font-weight: 600;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 20px;
-    transition: all 0.3s ease;
-}
-
-#contact-form button:hover {
-    background-color: #28a745;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .card {
-        margin-bottom: 20px;
+        <script>
+            const csrfToken = "{{ csrf_token }}";
+        </script>
+        <style>
+            /* Styling */
+            body {
+                background-color: #f8f9fa;
+                font-family: 'Poppins', sans-serif;
+            }
+            .table {
+        border-collapse: separate;
+        border-spacing: 0 10px;
     }
 
-    #help-search {
-        font-size: 13px;
-        padding: 8px;
+    .btn-outline-primary {
+        border-radius: 20px;
+        padding: 5px 12px;
     }
 
-    #contact-form button {
+
+    .logo-img {
         width: 100%;
-    }
-}
-
-    </style>
-</head>
-
-<body>
-    <div class="d-flex">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div>
-                
-                <div class="text-center">
-                    <img src="{% static 'img/log.png' %}" alt="AgriEmpower Logo" class="logo-img">
-                </div>
-                <ul>
-                    <li><a href="#" id="home-link"><i class="bi bi-house-fill"></i> Home</a></li>
-                    <li><a href="#" id="my-farms-link"><i class="bi bi-tree-fill"></i> Loan Management</a></li>
-                    <li><a href="#" id="loan-applications-link"><i class="bi bi-clipboard-check"></i> Loan Applications</a></li>
-                </ul>
-            </div>
-            <ul>
-                <li><a href="#" id="profile-link"><i class="bi bi-person-fill"></i> Profile</a></li>
-                <li><a href="#" id="settings-link"><i class="bi bi-gear-fill"></i> Settings</a></li>
-                <li><a href="{% url 'logout' %}" class="text-danger"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
-            </ul>
-        </div>
-
-         <!-- Main content -->
-         <div class="main-content flex-grow-1">
-            <!-- Navbar -->
-            <nav class="navbar navbar-light bg-white shadow-sm mb-4">
-                <div class="container-fluid d-flex justify-content-between align-items-center">
-                    <a class="navbar-brand">Financial Institution Dashboard</a>
-                    <form class="d-flex search-bar">
-                        <input class="form-control me-2" type="search" placeholder="Search..." aria-label="Search">
-                    </form>
-                </div>
-            </nav>
-            <!-- Home Section with Overview and Charts -->
-            <div id="home-section" class="content-section active-section">
-                <h4>Overview</h4>
-                <div class="row">
-                    <!-- Farm Overview Card -->
-                    <div class="col-md-4 mb-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Total Farms</h5>
-                                <p class="card-text">5 Active Farms</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Loan Applications Card -->
-                    <div class="col-md-4 mb-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Pending Loan Applications</h5>
-                                <p class="card-text">3 Pending</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Productivity Card -->
-                    <div class="col-md-4 mb-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Farm Productivity</h5>
-                                <p class="card-text">82% Average</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Charts -->
-                <div class="row">
-                    <div class="col-md-6 mb-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Farm Productivity Over Time</h5>
-                                <canvas id="productivityChart"></canvas> <!-- Chart.js for farm productivity -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 mb-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Loan Status Overview</h5>
-                                <canvas id="loanStatusChart"></canvas> <!-- Chart.js for loan status -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Loan Progress -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <h5>Loan Application Progress</h5>
-                        <div class="progress-step mb-4">
-                            <div class="step-number active">1</div>
-                            <div class="progress-bar"></div>
-                            <div class="step-number">2</div>
-                            <div class="progress-bar"></div>
-                            <div class="step-number">3</div>
-                        </div>
-                        <div>
-                            <p>Step 1: Loan Application Submitted</p>
-                            <p>Step 2: Loan Application Under Review</p>
-                            <p>Step 3: Loan Approved/Rejected</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- My Farms Section -->
-            <div id="my-farms-section" class="content-section">
-                                    
-                    <h5>Active Loans Summary</h5>
-                    <div class="table-responsive">
-                        <table class="table align-middle">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Description</th>
-                                    <th>Loan ID</th>
-                                    <th>Customer</th>
-                                    <th>Loan Type</th>
-                                    <th>Date Issued</th>
-                                    <th>Remaining Balance (USD)</th>
-                                    <th>Status</th>
-                                    <th>Download</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><i class="bi bi-arrow-down-circle text-primary"></i> Business Loan</td>
-                                    <td>#LN-001</td>
-                                    <td>Jane Doe</td>
-                                    <td>Business</td>
-                                    <td>1 Nov, 2024</td>
-                                    <td class="text-danger">- $10,500</td>
-                                    <td><span class="badge bg-success">Active</span></td>
-                                    <td><button class="btn btn-outline-primary btn-sm">Download</button></td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-arrow-up-circle text-success"></i> Personal Loan</td>
-                                    <td>#LN-002</td>
-                                    <td>John Smith</td>
-                                    <td>Personal</td>
-                                    <td>5 Nov, 2024</td>
-                                    <td class="text-success">+ $12,000</td>
-                                    <td><span class="badge bg-warning">Overdue</span></td>
-                                    <td><button class="btn btn-outline-primary btn-sm">Download</button></td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-arrow-down-circle text-primary"></i> Agricultural Loan</td>
-                                    <td>#LN-003</td>
-                                    <td>Alice Brown</td>
-                                    <td>Agricultural</td>
-                                    <td>10 Nov, 2024</td>
-                                    <td class="text-danger">- $3,500</td>
-                                    <td><span class="badge bg-success">Active</span></td>
-                                    <td><button class="btn btn-outline-primary btn-sm">Download</button></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-            </div>
-<!-- Loan Applications Section -->
-<div id="loan-applications-section" class="content-section">
-    <h5>Loan Applications</h5>
-
-    <!-- Farmer Loan Applications -->
-    <h6>Farmer Loan Applications</h6>
-    <div class="table-responsive mb-4">
-        <table class="table align-middle">
-            <thead class="table-light">
-                <tr>
-                    <th>Farmer Name</th>
-                    <th>Download Application</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if farmer_loan_applications.exists %}
-                    {% for application in farmer_loan_applications %}
-                        <tr>
-                            <td>{{ application.farmer.full_name }}</td>
-                            <td>
-                                {% if application.loan_pdf %}
-                                    <a href="{{ application.loan_pdf.url }}" download class="btn btn-outline-primary btn-sm">Download</a>
-                                {% else %}
-                                    <span class="text-muted">No PDF uploaded</span>
-                                {% endif %}
-                            </td>
-                            <td>{{ application.loan_status }}</td>
-                        </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="3" class="text-center">No farmer loan applications found.</td>
-                    </tr>
-                {% endif %}
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Cooperative Loan Applications -->
-    <h6>Cooperative Loan Applications</h6>
-    <div class="table-responsive">
-        <table class="table align-middle">
-            <thead class="table-light">
-                <tr>
-                    <th>Cooperative Name</th>
-                    <th>Download Application</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if cooperative_loan_applications.exists %}
-                    {% for coop_application in cooperative_loan_applications %}
-                        <tr>
-                            <td>{{ coop_application.cooperative.name }}</td>
-                            <td>
-                                {% if coop_application.loan_pdf %}
-                                    <a href="{{ coop_application.loan_pdf.url }}" download class="btn btn-outline-primary btn-sm">Download</a>
-                                {% else %}
-                                    <span class="text-muted">No PDF uploaded</span>
-                                {% endif %}
-                            </td>
-                            <td>{{ coop_application.loan_status }}</td>
-                        </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="3" class="text-center">No cooperative loan applications found.</td>
-                    </tr>
-                {% endif %}
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<div id="profile-section" class="content-section">
-    <h4>Update Financial Institution Profile</h4>
-    <form method="post">
-        {% csrf_token %}
-
-        <div class="mb-3">
-            <label for="name" class="form-label">Institution Name</label>
-            <input type="text" class="form-control" name="name" value="{{ financial_institution.name }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="email" class="form-label"> Email</label>
-            <input type="email" class="form-control" name="email" value="{{ financial_institution.email }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="institution_type" class="form-label">Institution Type</label>
-            <input type="text" class="form-control" name="institution_type" value="{{ financial_institution.institution_type }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="phone_number" class="form-label">Phone Number</label>
-            <input type="text" class="form-control" name="phone_number" value="{{ financial_institution.phone_number }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="license_number" class="form-label">License Number</label>
-            <input type="text" class="form-control" name="license_number" value="{{ financial_institution.license_number }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="address" class="form-label">Address</label>
-            <input type="text" class="form-control" name="address" value="{{ financial_institution.address }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="interest_rate_range" class="form-label">Interest Rate Range</label>
-            <input type="text" class="form-control" name="interest_rate_range" value="{{ financial_institution.interest_rate_range }}" required>
-        </div>
-
-<!-- Password Update Section -->
-<h5>Change Password</h5>
-<div class="mb-3">
-<label for="new_password" class="form-label">New Password</label>
-<input type="password" class="form-control" name="new_password" placeholder="Enter new password">
-</div>
-<div class="mb-3">
-<label for="confirm_password" class="form-label">Confirm Password</label>
-<input type="password" class="form-control" name="confirm_password" placeholder="Confirm new password">
-</div>
-
-<button type="submit" class="btn btn-primary">Update Profile</button>
-</form>
-</div>
-
-
-<!-- Settings Section -->
-<div id="settings-section" class="content-section">
-<h4>Settings</h4>
-
-<!-- Account Management -->
-<div class="mb-4">
-<h5>Account Management</h5>
-<ul class="list-unstyled">
-<li><a href="" class="text-danger">Delete Account</a></li>
-</ul>
-</div>
-
-<!-- Help and Support Section -->
-<div class="mb-4">
-<h5>Help and Support</h5>
-
-<!-- Search Bar for Help Topics -->
-<div class="mb-3">
-<input type="text" id="help-search" class="form-control" placeholder="Search help topics...">
-</div>
-
-<!-- Help Categories -->
-<div class="row">
-<!-- Getting Started -->
-<div class="col-md-4 mb-3">
-    <div class="card">
-        <div class="card-body">
-            <h6 class="card-title">Getting Started</h6>
-            <ul class="list-unstyled">
-                <li><a href="#">Quick Start Guide</a></li>
-                <li><a href="#">Registering Your Farm</a></li>
-                <li><a href="#">Applying for a Loan</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<!-- Technical Support -->
-<div class="col-md-4 mb-3">
-    <div class="card">
-        <div class="card-body">
-            <h6 class="card-title">Technical Support</h6>
-            <ul class="list-unstyled">
-                <li><a href="#">Troubleshooting Guide</a></li>
-                <li><a href="#">Frequently Asked Questions</a></li>
-                <li><a href="#">Contact Support</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<!-- Contact Us -->
-<div class="col-md-4 mb-3">
-    <div class="card">
-        <div class="card-body">
-            <h6 class="card-title">Contact Us</h6>
-            <form method="post" action="">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <textarea class="form-control" name="question" placeholder="Ask a question..." rows="3" required></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary btn-sm">Submit</button>
-            </form>
-        </div>
-    </div>
-</div>
-</div>
-</div>
-</div>
-
-
-            </div>
-
-            <!-- Progress Section -->
-            <div id="progress-section" class="content-section">
-                <h4>Loan Application Progress</h4>
-                <div class="progress-step mb-4">
-                    <div class="step-number active">1</div>
-                    <div class="progress-bar"></div>
-                    <div class="step-number">2</div>
-                    <div class="progress-bar"></div>
-                    <div class="step-number">3</div>
-                </div>
-                <div>
-                    <p>Step 1: Loan Application Submitted</p>
-                    <p>Step 2: Loan Application Under Review</p>
-                    <p>Step 3: Loan Approved/Rejected</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- JS for Navigation and Form Submission -->
-    <script>
-        document.getElementById("home-link").addEventListener("click", function () {
-            showSection("home-section");
-        });
-
-        document.getElementById("my-farms-link").addEventListener("click", function () {
-            showSection("my-farms-section");
-        });
-
-        document.getElementById("loan-applications-link").addEventListener("click", function () {
-            showSection("loan-applications-section");
-        });
-
-        document.getElementById("profile-link").addEventListener("click", function () {
-            showSection("profile-section");
-        });
-
-        document.getElementById("settings-link").addEventListener("click", function () {
-            showSection("settings-section");
-        });
-
-        function showSection(sectionId) {
-            document.querySelectorAll(".content-section").forEach(function (section) {
-                section.classList.remove("active-section");
-            });
-            document.getElementById(sectionId).classList.add("active-section");
-        }
-
-        function displayForm() {
-    var selectedBank = document.getElementById("bank-selection").value;
-    var downloadLink = document.getElementById("download-link");
-
-    if (selectedBank === "bk") {
-        downloadLink.href = "files/BKLoanApplication.pdf";
-    } else if (selectedBank === "im") {
-        downloadLink.href = "files/im-loan-form.pdf";
-    } else if (selectedBank === "eq") {
-        downloadLink.href = "files/eq-loan-form.pdf";
+        max-width: 200px; /* Adjust this value as needed */
+        height: auto;
+        display: block;
+        margin: 0 auto 20px auto; /* Centers the image and adds bottom margin */
     }
 
-    // Set download attribute to ensure the PDF downloads instead of opening
-    downloadLink.setAttribute("download", "");
+        
+    /* Sidebar Container */
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: #2E8B57;
+        border-radius: 15px;
+        padding: 20px;
+        color: #ffffff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
 
-    document.getElementById("loan-form-section").style.display = "block";
-}
+    /* Sidebar Top Section */
+    .sidebar-top {
+        flex-grow: 1;
+    }
+
+    /* Sidebar Bottom Section */
+    .sidebar-bottom {
+        margin-top: auto;
+    }
+
+    /* Sidebar Links */
+    .sidebar ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    .sidebar ul li {
+        padding: 10px 0;
+    }
+
+    .sidebar ul li a {
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        border-radius: 10px;
+        padding: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar ul li a:hover {
+        background-color: #c4e750;
+        color: #ffffff;
+    }
+
+    .sidebar ul li a i {
+        margin-right: 10px;
+    }
 
 
-        // Handle Farm Form Submission and Add Row to Table
-        // Chart.js for Farm Productivity
-        var ctx1 = document.getElementById('productivityChart').getContext('2d');
-        var productivityChart = new Chart(ctx1, {
-            type: 'line',
-            data: {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-                datasets: [{
-                    label: 'Productivity (%)',
-                    data: [70, 75, 80, 85, 90, 95],
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 2,
-                    fill: false
-                }]
+            .main-content {
+                margin-left: 250px;
+                padding: 20px;
             }
-        });
 
-        // Chart.js for Loan Status
-        var ctx2 = document.getElementById('loanStatusChart').getContext('2d');
-        var loanStatusChart = new Chart(ctx2, {
-            type: 'doughnut',
-            data: {
-                labels: ['Approved', 'Pending', 'Rejected'],
-                datasets: [{
-                    data: [60, 30, 10],
-                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
-                }]
+            .navbar {
+                background-color: #ffffff;
+                padding: 10px;
+                border-radius: 8px;
+                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
             }
-        });
-    </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-<!-- Add your inline style for the form below -->
-<style>
-    .form-section h5 {
+            .navbar .dropdown-toggle img {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+            }
+
+            .content-section {
+                display: none;
+            }
+
+            .active-section {
+                display: block;
+            }
+
+            .card {
+                border: none;
+                border-radius: 15px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            }
+
+            .card h5 {
+                font-weight: 600;
+            }
+
+            .card .card-text {
+                color: #6c757d;
+            }
+
+            .table {
+                margin-top: 20px;
+                border: 1px solid #ddd;
+            }
+
+            .table th, .table td {
+                text-align: left;
+                padding: 8px;
+            }
+
+            .table th {
+                background-color: #2E8B57;
+                color: white;
+            }
+
+            .progress-step {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+            }
+
+            .progress-bar {
+                flex-grow: 1;
+                height: 4px;
+                background-color: #ccc;
+                margin: 0 10px;
+            }
+
+            .progress-step.active .step-number {
+                background-color: #2E8B57;
+                color: white;
+            }
+
+            .step-number {
+                width: 30px;
+                height: 30px;
+                background-color: #ccc;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+                    /* Help and Support Section Styling */
+    #settings-section {
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Headings */
+    #settings-section h4 {
         font-weight: 700;
         color: #2E8B57;
     }
-    
-    .form-control:focus {
+
+    #settings-section h5 {
+        font-weight: 600;
+        color: #333;
+    }
+
+    /* List Styling for Account Management */
+    #settings-section ul {
+        padding-left: 0;
+        list-style-type: none;
+    }
+
+    #settings-section ul li {
+        padding: 10px 0;
+    }
+
+    #settings-section ul li a {
+        color: #2E8B57;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    #settings-section ul li a:hover {
+        text-decoration: underline;
+    }
+
+    /* Card Styling for Help Categories */
+    .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        background-color: #f8f9fa;
+    }
+
+    .card h6 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2E8B57;
+    }
+
+    .card ul {
+        padding-left: 0;
+        list-style-type: none;
+    }
+
+    .card ul li {
+        padding: 5px 0;
+    }
+
+    .card ul li a {
+        color: #333;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .card ul li a:hover {
+        color: #2E8B57;
+        text-decoration: underline;
+    }
+
+    /* Search Bar Styling */
+    #help-search {
+        border-radius: 8px;
+        border: 2px solid #2E8B57;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    #help-search:focus {
         border-color: #2E8B57;
         box-shadow: 0 0 8px rgba(46, 139, 87, 0.5);
     }
-    
-    #farm-form {
-        transition: transform 0.3s ease;
-    }
-    
-    #farm-form:hover {
-        transform: translateY(-5px);
-    }
 
-    #farm-form input,
-    #farm-form select {
-        padding: 10px;
+    /* Form for Submitting Questions */
+    #contact-form textarea {
+        border-radius: 8px;
         border: 2px solid #2E8B57;
-        font-size: 16px;
+        padding: 10px;
+        font-size: 14px;
     }
 
-    #submit-animation {
-        animation: slide-right 1s infinite;
+    #contact-form textarea:focus {
+        border-color: #2E8B57;
+        box-shadow: 0 0 8px rgba(46, 139, 87, 0.5);
     }
 
-    button:hover #submit-animation {
-        left: 100%;
+    #contact-form button {
+        background-color: #2E8B57;
+        color: #ffffff;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
     }
 
-    @keyframes slide-right {
-        0% {
-            left: -100%;
+    #contact-form button:hover {
+        background-color: #28a745;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .card {
+            margin-bottom: 20px;
         }
-        50% {
-            left: 0;
+
+        #help-search {
+            font-size: 13px;
+            padding: 8px;
         }
-        100% {
+
+        #contact-form button {
+            width: 100%;
+        }
+    }
+
+        </style>
+    </head>
+
+    <body>
+        <div class="d-flex">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div>
+                    
+                    <div class="text-center">
+                        <img src="{% static 'img/log.png' %}" alt="AgriEmpower Logo" class="logo-img">
+                    </div>
+                    <ul>
+                        <li><a href="#" id="home-link"><i class="bi bi-house-fill"></i> Home</a></li>
+                        <li><a href="#" id="my-farms-link"><i class="bi bi-tree-fill"></i> Loan Management</a></li>
+                        <li><a href="#" id="loan-applications-link"><i class="bi bi-clipboard-check"></i> Loan Applications</a></li>
+                    </ul>
+                </div>
+                <ul>
+                    <li><a href="#" id="profile-link"><i class="bi bi-person-fill"></i> Profile</a></li>
+                    <li><a href="#" id="settings-link"><i class="bi bi-gear-fill"></i> Settings</a></li>
+                    <li><a href="{% url 'logout' %}" class="text-danger"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                </ul>
+            </div>
+
+            <!-- Main content -->
+            <div class="main-content flex-grow-1">
+                <!-- Navbar -->
+                <nav class="navbar navbar-light bg-white shadow-sm mb-4">
+                    <div class="container-fluid d-flex justify-content-between align-items-center">
+                        <a class="navbar-brand">Financial Institution Dashboard</a>
+                        <form class="d-flex search-bar">
+                            <input class="form-control me-2" type="search" placeholder="Search..." aria-label="Search">
+                        </form>
+                    </div>
+                </nav>
+                <!-- Home Section with Overview and Charts -->
+                <div id="home-section" class="content-section active-section">
+                    <h4>Overview</h4>
+                    <div class="row">
+                        <!-- Farm Overview Card -->
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total Farms</h5>
+                                    <p class="card-text">5 Active Farms</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Loan Applications Card -->
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Pending Loan Applications</h5>
+                                    <p class="card-text">3 Pending</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Productivity Card -->
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Farm Productivity</h5>
+                                    <p class="card-text">82% Average</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Farm Productivity Over Time</h5>
+                                    <canvas id="productivityChart"></canvas> <!-- Chart.js for farm productivity -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Loan Status Overview</h5>
+                                    <canvas id="loanStatusChart"></canvas> <!-- Chart.js for loan status -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loan Progress -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5>Loan Application Progress</h5>
+                            <div class="progress-step mb-4">
+                                <div class="step-number active">1</div>
+                                <div class="progress-bar"></div>
+                                <div class="step-number">2</div>
+                                <div class="progress-bar"></div>
+                                <div class="step-number">3</div>
+                            </div>
+                            <div>
+                                <p>Step 1: Loan Application Submitted</p>
+                                <p>Step 2: Loan Application Under Review</p>
+                                <p>Step 3: Loan Approved/Rejected</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Farms Section -->
+                <div id="my-farms-section" class="content-section">
+                                        
+                        <h5>Active Loans Summary</h5>
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Description</th>
+                                        <th>Loan ID</th>
+                                        <th>Customer</th>
+                                        <th>Loan Type</th>
+                                        <th>Date Issued</th>
+                                        <th>Remaining Balance (USD)</th>
+                                        <th>Status</th>
+                                        <th>Download</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><i class="bi bi-arrow-down-circle text-primary"></i> Business Loan</td>
+                                        <td>#LN-001</td>
+                                        <td>Jane Doe</td>
+                                        <td>Business</td>
+                                        <td>1 Nov, 2024</td>
+                                        <td class="text-danger">- $10,500</td>
+                                        <td><span class="badge bg-success">Active</span></td>
+                                        <td><button class="btn btn-outline-primary btn-sm">Download</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-arrow-up-circle text-success"></i> Personal Loan</td>
+                                        <td>#LN-002</td>
+                                        <td>John Smith</td>
+                                        <td>Personal</td>
+                                        <td>5 Nov, 2024</td>
+                                        <td class="text-success">+ $12,000</td>
+                                        <td><span class="badge bg-warning">Overdue</span></td>
+                                        <td><button class="btn btn-outline-primary btn-sm">Download</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><i class="bi bi-arrow-down-circle text-primary"></i> Agricultural Loan</td>
+                                        <td>#LN-003</td>
+                                        <td>Alice Brown</td>
+                                        <td>Agricultural</td>
+                                        <td>10 Nov, 2024</td>
+                                        <td class="text-danger">- $3,500</td>
+                                        <td><span class="badge bg-success">Active</span></td>
+                                        <td><button class="btn btn-outline-primary btn-sm">Download</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                </div>
+    <!-- Loan Applications Section -->
+    <div id="loan-applications-section" class="content-section">
+        <h5>Loan Applications</h5>
+
+        <!-- Farmer Loan Applications -->
+        <h6>Farmer Loan Applications</h6>
+        <div class="table-responsive mb-4">
+            <table class="table align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Farmer Name</th>
+                        <th>Download Application</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if farmer_loan_applications.exists %}
+                        {% for application in farmer_loan_applications %}
+                            <tr>
+                                <td>{{ application.farmer.full_name }}</td>
+                                <td>
+                                    {% if application.loan_pdf %}
+                                        <a href="{{ application.loan_pdf.url }}" download class="btn btn-outline-primary btn-sm">Download</a>
+                                    {% else %}
+                                        <span class="text-muted">No PDF uploaded</span>
+                                    {% endif %}
+                                </td>
+                                <td id="status-{{ application.loan_id }}">{{ application.loan_status }}</td>
+                                <td>
+                                    <button onclick="updateStatus('{{ application.loan_id }}', 'Received', this)" class="btn btn-success">Received</button>
+                                    <button onclick="updateStatus('{{ application.loan_id }}', 'Under Review', this)" class="btn btn-warning">Review</button>
+                                    <button onclick="updateStatus('{{ application.loan_id }}', 'Approved', this)" class="btn btn-primary">Approve</button>
+                                    <button onclick="updateStatus('{{ application.loan_id }}', 'Denied', this)" class="btn btn-danger">Deny</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3" class="text-center">No farmer loan applications found.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Cooperative Loan Applications -->
+        <h6>Cooperative Loan Applications</h6>
+<div class="table-responsive">
+    <table class="table align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Cooperative Name</th>
+                <th>Download Application</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if cooperative_loan_applications.exists %}
+                {% for coop_application in cooperative_loan_applications %}
+                    <tr>
+                        <td>{{ coop_application.cooperative.name }}</td>
+                        <td>
+                            {% if coop_application.loan_pdf %}
+                                <a href="{{ coop_application.loan_pdf.url }}" download class="btn btn-outline-primary btn-sm">Download</a>
+                            {% else %}
+                                <span class="text-muted">No PDF uploaded</span>
+                            {% endif %}
+                        </td>
+                        <td id="status-{{ coop_application.loan_id }}">{{ coop_application.loan_status }}</td>
+                        <td>
+                            <button onclick="updateCooperativeLoanStatus('{{ coop_application.loan_id }}', 'Received', this)" class="btn btn-success">Received</button>
+                            <button onclick="updateCooperativeLoanStatus('{{ coop_application.loan_id }}', 'Review', this)" class="btn btn-warning">Review</button>
+                            <button onclick="updateCooperativeLoanStatus('{{ coop_application.loan_id }}', 'Approved', this)" class="btn btn-primary">Approve</button>
+                            <button onclick="updateCooperativeLoanStatus('{{ coop_application.loan_id }}', 'Rejected', this)" class="btn btn-danger">Deny</button>
+
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4" class="text-center">No cooperative loan applications found.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+    </div>
+
+    <div id="profile-section" class="content-section">
+        <h4>Update Financial Institution Profile</h4>
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="name" class="form-label">Institution Name</label>
+                <input type="text" class="form-control" name="name" value="{{ financial_institution.name }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label"> Email</label>
+                <input type="email" class="form-control" name="email" value="{{ financial_institution.email }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="institution_type" class="form-label">Institution Type</label>
+                <input type="text" class="form-control" name="institution_type" value="{{ financial_institution.institution_type }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="phone_number" class="form-label">Phone Number</label>
+                <input type="text" class="form-control" name="phone_number" value="{{ financial_institution.phone_number }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="license_number" class="form-label">License Number</label>
+                <input type="text" class="form-control" name="license_number" value="{{ financial_institution.license_number }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="address" class="form-label">Address</label>
+                <input type="text" class="form-control" name="address" value="{{ financial_institution.address }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="interest_rate_range" class="form-label">Interest Rate Range</label>
+                <input type="text" class="form-control" name="interest_rate_range" value="{{ financial_institution.interest_rate_range }}" required>
+            </div>
+
+    <!-- Password Update Section -->
+    <h5>Change Password</h5>
+    <div class="mb-3">
+    <label for="new_password" class="form-label">New Password</label>
+    <input type="password" class="form-control" name="new_password" placeholder="Enter new password">
+    </div>
+    <div class="mb-3">
+    <label for="confirm_password" class="form-label">Confirm Password</label>
+    <input type="password" class="form-control" name="confirm_password" placeholder="Confirm new password">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Profile</button>
+    </form>
+    </div>
+
+
+    <!-- Settings Section -->
+    <div id="settings-section" class="content-section">
+    <h4>Settings</h4>
+
+    <!-- Account Management -->
+    <div class="mb-4">
+    <h5>Account Management</h5>
+    <ul class="list-unstyled">
+    <li><a href="" class="text-danger">Delete Account</a></li>
+    </ul>
+    </div>
+
+    <!-- Help and Support Section -->
+    <div class="mb-4">
+    <h5>Help and Support</h5>
+
+    <!-- Search Bar for Help Topics -->
+    <div class="mb-3">
+    <input type="text" id="help-search" class="form-control" placeholder="Search help topics...">
+    </div>
+
+    <!-- Help Categories -->
+    <div class="row">
+    <!-- Getting Started -->
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title">Getting Started</h6>
+                <ul class="list-unstyled">
+                    <li><a href="#">Quick Start Guide</a></li>
+                    <li><a href="#">Registering Your Farm</a></li>
+                    <li><a href="#">Applying for a Loan</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Technical Support -->
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title">Technical Support</h6>
+                <ul class="list-unstyled">
+                    <li><a href="#">Troubleshooting Guide</a></li>
+                    <li><a href="#">Frequently Asked Questions</a></li>
+                    <li><a href="#">Contact Support</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Us -->
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title">Contact Us</h6>
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <textarea class="form-control" name="question" placeholder="Ask a question..." rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+    </div>
+
+
+                </div>
+
+                <!-- Progress Section -->
+                <div id="progress-section" class="content-section">
+                    <h4>Loan Application Progress</h4>
+                    <div class="progress-step mb-4">
+                        <div class="step-number active">1</div>
+                        <div class="progress-bar"></div>
+                        <div class="step-number">2</div>
+                        <div class="progress-bar"></div>
+                        <div class="step-number">3</div>
+                    </div>
+                    <div>
+                        <p>Step 1: Loan Application Submitted</p>
+                        <p>Step 2: Loan Application Under Review</p>
+                        <p>Step 3: Loan Approved/Rejected</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- JS for Navigation and Form Submission -->
+        <script>
+            document.getElementById("home-link").addEventListener("click", function () {
+                showSection("home-section");
+            });
+
+            document.getElementById("my-farms-link").addEventListener("click", function () {
+                showSection("my-farms-section");
+            });
+
+            document.getElementById("loan-applications-link").addEventListener("click", function () {
+                showSection("loan-applications-section");
+            });
+
+            document.getElementById("profile-link").addEventListener("click", function () {
+                showSection("profile-section");
+            });
+
+            document.getElementById("settings-link").addEventListener("click", function () {
+                showSection("settings-section");
+            });
+
+            function showSection(sectionId) {
+                document.querySelectorAll(".content-section").forEach(function (section) {
+                    section.classList.remove("active-section");
+                });
+                document.getElementById(sectionId).classList.add("active-section");
+            }
+
+            function displayForm() {
+        var selectedBank = document.getElementById("bank-selection").value;
+        var downloadLink = document.getElementById("download-link");
+
+        if (selectedBank === "bk") {
+            downloadLink.href = "files/BKLoanApplication.pdf";
+        } else if (selectedBank === "im") {
+            downloadLink.href = "files/im-loan-form.pdf";
+        } else if (selectedBank === "eq") {
+            downloadLink.href = "files/eq-loan-form.pdf";
+        }
+
+        // Set download attribute to ensure the PDF downloads instead of opening
+        downloadLink.setAttribute("download", "");
+
+        document.getElementById("loan-form-section").style.display = "block";
+    }
+    function updateStatus(applicationId, newStatus, button) {
+    if (!applicationId) {
+        alert("Invalid application ID");
+        return;
+    }
+
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    fetch(`/update-loan-status/${applicationId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+        body: JSON.stringify({ status: newStatus }),
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the status text
+                document.getElementById(`status-${applicationId}`).textContent = newStatus;
+
+                // Show a popup message
+                alert(data.message || 'Status updated successfully!');
+
+                // Optionally disable the button
+                button.disabled = true;
+            } else {
+                alert(`Error: ${data.error}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error updating status:', error);
+            alert('Error updating status.');
+        });
+}
+
+
+
+
+function updateCooperativeLoanStatus(applicationId, newStatus, button) {
+    if (!applicationId) {
+        alert("Invalid application ID");
+        return;
+    }
+
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    fetch(`/update-cooperative-loan-status/${applicationId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+        body: JSON.stringify({ status: newStatus }),
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show a popup message
+                alert(data.message || 'Status updated successfully!');
+
+                // Find and update the status cell in the table
+                const statusCell = document.getElementById(`status-${applicationId}`);
+                if (statusCell) {
+                    statusCell.textContent = newStatus; // Update the status text
+                    statusCell.className = ''; // Clear any existing class
+                    if (newStatus === 'Rejected') {
+                        statusCell.classList.add('text-danger'); // Add red text for "Rejected"
+                    } else if (newStatus === 'Received') {
+                        statusCell.classList.add('text-success'); // Add green text for "Received"
+                    } else if (newStatus === 'Under Review') {
+                        statusCell.classList.add('text-warning'); // Add yellow text for "Under Review"
+                    } else if (newStatus === 'Approved') {
+                        statusCell.classList.add('text-primary'); // Add blue text for "Approved"
+                    }
+                }
+
+                // Optionally disable only the clicked button (or perform other UI actions)
+                button.disabled = true;
+            } else {
+                alert(`Error: ${data.error}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error updating status:', error);
+            alert('Error updating status.');
+        });
+}
+
+
+
+
+            // Handle Farm Form Submission and Add Row to Table
+            // Chart.js for Farm Productivity
+            var ctx1 = document.getElementById('productivityChart').getContext('2d');
+            var productivityChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+                    datasets: [{
+                        label: 'Productivity (%)',
+                        data: [70, 75, 80, 85, 90, 95],
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 2,
+                        fill: false
+                    }]
+                }
+            });
+
+            // Chart.js for Loan Status
+            var ctx2 = document.getElementById('loanStatusChart').getContext('2d');
+            var loanStatusChart = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Approved', 'Pending', 'Rejected'],
+                    datasets: [{
+                        data: [60, 30, 10],
+                        backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                    }]
+                }
+            });
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+    <!-- Add your inline style for the form below -->
+    <style>
+        .form-section h5 {
+            font-weight: 700;
+            color: #2E8B57;
+        }
+        
+        .form-control:focus {
+            border-color: #2E8B57;
+            box-shadow: 0 0 8px rgba(46, 139, 87, 0.5);
+        }
+        
+        #farm-form {
+            transition: transform 0.3s ease;
+        }
+        
+        #farm-form:hover {
+            transform: translateY(-5px);
+        }
+
+        #farm-form input,
+        #farm-form select {
+            padding: 10px;
+            border: 2px solid #2E8B57;
+            font-size: 16px;
+        }
+
+        #submit-animation {
+            animation: slide-right 1s infinite;
+        }
+
+        button:hover #submit-animation {
             left: 100%;
         }
-    }
-</style>
 
-<!-- Add the JavaScript for the button animation below -->
+        @keyframes slide-right {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 0;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+    </style>
 
-</html>
+    <!-- Add the JavaScript for the button animation below -->
+
+    </html>

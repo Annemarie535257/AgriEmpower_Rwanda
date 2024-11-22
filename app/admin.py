@@ -10,7 +10,7 @@ class FarmerAdmin(admin.ModelAdmin):
 
 @admin.register(Cooperative)
 class CooperativeAdmin(admin.ModelAdmin):
-    list_display = ('coop_id','name', 'location', 'registration_number', 'number_of_members', 'performance_status')
+    list_display = ('coop_id','name', 'email', 'location', 'registration_number', 'number_of_members', 'performance_status')
     search_fields = ('name', 'registration_number')
     list_filter = ('location', 'performance_status')
 

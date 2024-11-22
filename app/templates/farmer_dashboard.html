@@ -139,33 +139,35 @@
             color: white;
         }
 
+        .progress-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
         .progress-step {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #ccc;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
         }
-
+        .progress-step.active {
+            background-color: #4caf50;
+            color: #fff;
+        }
         .progress-bar {
             flex-grow: 1;
             height: 4px;
             background-color: #ccc;
-            margin: 0 10px;
+            position: relative;
+            top: -15px;
         }
-
-        .progress-step.active .step-number {
-            background-color: #2E8B57;
-            color: white;
-        }
-
-        .step-number {
-            width: 30px;
-            height: 30px;
-            background-color: #ccc;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .progress-bar.active {
+            background-color: #4caf50;
         }
 
         /* Help and Support Section Styling */
@@ -297,6 +299,7 @@
     #contact-form button {
         width: 100%;
     }
+
 }
 
 
@@ -393,24 +396,6 @@
                     </div>
                 </div>
 
-                <!-- Loan Progress -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <h5>Loan Application Progress</h5>
-                        <div class="progress-step mb-4">
-                            <div class="step-number active">1</div>
-                            <div class="progress-bar"></div>
-                            <div class="step-number">2</div>
-                            <div class="progress-bar"></div>
-                            <div class="step-number">3</div>
-                        </div>
-                        <div>
-                            <p>Step 1: Loan Application Submitted</p>
-                            <p>Step 2: Loan Application Under Review</p>
-                            <p>Step 3: Loan Approved/Rejected</p>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div id="profile-section" class="content-section">
@@ -613,28 +598,40 @@
         </div>
     </form>
 </div>
-            <!-- Progress Section -->
-            <div id="progress-section" class="content-section">
-                <h4>Loan Application Progress</h4>
-                {% if loan_applications %}
-                    {% for application in loan_applications %}
-                        <div class="progress-step mb-4">
-                            <div class="step-number {% if application.loan_status == 'Pending' or application.loan_status == 'Under Review' or application.loan_status == 'Approved' %}active{% endif %}">1</div>
-                            <div class="progress-bar"></div>
-                            <div class="step-number {% if application.loan_status == 'Under Review' or application.loan_status == 'Approved' %}active{% endif %}">2</div>
-                            <div class="progress-bar"></div>
-                            <div class="step-number {% if application.loan_status == 'Approved' or application.loan_status == 'Rejected' %}active{% endif %}">3</div>
-                        </div>
-                        <div>
-                            <p>Step 1: Loan Application Submitted - {{ application.loan_status }}</p>
-                            <p>Step 2: Loan Application Under Review</p>
-                            <p>Step 3: Loan {{ application.loan_status }}</p>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <p>No loan applications found.</p>
-                {% endif %}
-            </div>
+
+<!-- Loan Progress Tracker Section -->
+<div id="progress-section" class="tracker-section">
+    <h4>Loan Progress Tracker</h4>
+    <div class="progress-container">
+        <!-- Step 1: Application Received -->
+        <div id="step-1" class="progress-step {% if application.loan_status == 'Received' or application.loan_status == 'Under Review' or application.loan_status == 'Approved' or application.loan_status == 'Denied' %}active{% endif %}">
+            1
+        </div>
+        
+        <div class="progress-bar {% if application.loan_status == 'Under Review' or application.loan_status == 'Approved' or application.loan_status == 'Denied' %}active{% endif %}"></div>
+
+        <!-- Step 2: Application Under Review -->
+        <div id="step-2" class="progress-step {% if application.loan_status == 'Under Review' or application.loan_status == 'Approved' or application.loan_status == 'Denied' %}active{% endif %}">
+            2
+        </div>        
+        <div class="progress-bar {% if application.loan_status == 'Approved' or application.loan_status == 'Denied' %}active{% endif %}"></div>
+
+        <!-- Step 3: Application Approved/Denied -->
+        <div id="step-3" class="progress-step {% if application.loan_status == 'Approved' or application.loan_status == 'Denied' %}active{% endif %}">
+            3
+        </div>
+        
+    </div>
+
+    <!-- Status Descriptions -->
+    <p>Step 1: Application Received</p>
+    <p>Step 2: Application Under Review</p>
+    <p>Step 3: Application {{ application.loan_status }}</p>
+</div>
+
+
+
+            
 
     <!-- JS for Navigation and Form Submission -->
     <script>
@@ -679,36 +676,53 @@
             document.getElementById(sectionId).classList.add("active-section");
         }
 
-        function updateProgress(status) {
+        document.addEventListener('DOMContentLoaded', () => {
+    const farmerId = "{{ user.id }}"; // Farmer's ID from Django context
+    const step1 = document.getElementById('step-1');
+    const step2 = document.getElementById('step-2');
+    const step3 = document.getElementById('step-3');
 
-           // Update progress tracker based on loan status
-           if (status === 'submitted') {
-            document.getElementById('step1').classList.add('active');
-           } else if (status === 'under_review') {
-            document.getElementById('step1').classList.add('active');
-            document.getElementById('bar1').style.backgroundColor = '#2E8B57';
-            document.getElementById('step2').classList.add('active');
-           } else if (status === 'approved' || status === 'rejected') {
-            document.getElementById('step1').classList.add('active');
-            document.getElementById('bar1').style.backgroundColor = '#2E8B57';
-            document.getElementById('step2').classList.add('active');
-            document.getElementById('bar2').style.backgroundColor = '#2E8B57';
-            document.getElementById('step3').classList.add('active');
-           }
+    async function fetchLoanStatus() {
+        try {
+            const response = await fetch(`/update-loan-status/${applicationId}/`); // Update API endpoint as needed
+            const data = await response.json();
+            const loanStatus = data.status;
+
+            // Reset all steps
+            step1.classList.remove('active');
+            step2.classList.remove('active');
+            step3.classList.remove('active');
+
+            // Activate steps based on the current status
+            if (loanStatus === 'Received') {
+                step1.classList.add('active');
+            } else if (loanStatus === 'Under Review') {
+                step1.classList.add('active');
+                step2.classList.add('active');
+            } else if (loanStatus === 'Approved') {
+                step1.classList.add('active');
+                step2.classList.add('active');
+                step3.classList.add('active');
+            } else if (loanStatus === 'Denied') {
+                step1.classList.add('active');
+                step2.classList.add('active');
+                step3.classList.add('active');
+                step3.textContent = 'Denied';
+                step3.style.backgroundColor = '#f44336'; // Red color for Denied
+            }
+        } catch (error) {
+            console.error('Error fetching loan status:', error);
         }
+    }
 
-// Call this function with the current status
-// Assuming you will fetch the status dynamically from backend or during page load
-// updateProgress('submitted');
+    // Fetch loan status every 30 seconds
+    fetchLoanStatus();
+    setInterval(fetchLoanStatus, 30000);
+});
 
 
-
-         // Show the selected section
-    // const activeSection = document.getElementById(sectionId);
-    // if (activeSection) {
-    //     activeSection.classList.add("active-section");
-    //     activeSection.style.display = "block"; // Make sure it displays properly
-    // }
+// Call the function periodically
+setInterval(() => fetchLoanStatus(farmerId), 30000);
 
     function displayForm() {
     var selectedBank = document.getElementById("bank-selection").value;

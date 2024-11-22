@@ -45,18 +45,56 @@ def select_view(request):
     return render(request, 'select.html')
 
 def cooperative_dashboard(request):
+    try:
+        cooperative = Cooperative.objects.get(user=request.user)
+        loan_applications = LoanApplicationCooperative.objects.filter(cooperative=cooperative)
+        print(f"Loan applications for cooperative {cooperative.name}: {loan_applications}")
 
-    cooperative = get_object_or_404(Cooperative, user=request.user)
-    print(f"DEBUG: cooperative object: {cooperative}, coop_id: {cooperative.coop_id}")
+        # Determine the current loan status if a loan exists
+        current_loan_status = None
+        if loan_applications.exists():
+            current_loan_status = loan_applications.first().loan_status
+            print(f"Current loan status: {current_loan_status}")
+        else:
+            print("No loan applications found for this cooperative.")
 
-    return render(request, 'cooperative_dashboard.html', {'cooperative': cooperative})
+        return render(request, 'cooperative_dashboard.html', {
+            'cooperative': cooperative,
+            'loan_status': current_loan_status,
+        })
+    except Cooperative.DoesNotExist:
+        print("Cooperative does not exist for the logged-in user.")
+        return render(request, 'cooperative_dashboard.html', {'error': 'Cooperative not found.'})
+    except Exception as e:
+        print(f"Error in cooperative_dashboard: {e}")
+        return render(request, 'cooperative_dashboard.html', {'error': str(e)})
+
+# views.py
+from django.shortcuts import render
+from django.http import JsonResponse
+from .models import Farmer, LoanApplication
 
 def farmer_dashboard(request):
-    # Assuming the user is already authenticated, fetch the farmer profile from the user
-    farmer = get_object_or_404(Farmer, user=request.user)
-    
-    # Proceed with rendering the dashboard or handling other logic
-    return render(request, 'farmer_dashboard.html', {'farmer': farmer})
+    try:
+        # Fetch the logged-in farmer
+        farmer = Farmer.objects.get(user=request.user)
+
+        # Fetch the farmer's loan application
+        loan_application = LoanApplication.objects.filter(farmer=farmer).first()  # Assuming one loan per farmer
+        if loan_application:
+            print(f"Loan found for farmer {farmer.full_name}: {loan_application.loan_status}")
+        else:
+            print(f"No loan found for farmer {farmer.full_name}")
+
+        return render(request, 'farmer_dashboard.html', {
+            'farmer': farmer,
+            'application': loan_application,
+            'application_id': loan_application.loan_id if loan_application else None
+        })
+    except Exception as e:
+        print(f"Error in fetching farmer dashboard data: {e}")
+        return JsonResponse({'error': str(e)}, status=500)
+
 
 def financial_institution_dashboard(request):
     # Get the logged-in user's financial institution (using the username as the institution name)
@@ -620,29 +658,96 @@ def respond_to_loan_application(request, loan_id):
 
     except Exception as e:
         return Response({"error": str(e)}, status=400)
-    
-# Track Loan Status
-@swagger_auto_schema(
-    method='get',
-    operation_description="Track loan status by loan ID",
-    responses={200: 'Loan status retrieved', 404: 'Loan application not found'}
-)
-@csrf_exempt
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def track_loan_status(request, loan_id):
-    try:
-        loan_application = LoanApplication.objects.get(loan_id=loan_id)
-        return Response({
-            "loan_id": str(loan_application.loan_id),
-            "farmer": loan_application.farmer.full_name,
-            "financial_institution": loan_application.financial_institution.name,
-            "loan_amount": loan_application.loan_amount,
-            "loan_status": loan_application.loan_status
-        }, status=200)
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+import json
 
-    except LoanApplication.DoesNotExist:
-        return Response({"error": "Loan application not found"}, status=404)
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+import json
+
+def update_loan_status(request, loan_id):
+    if request.method == 'POST':
+        try:
+            # Log the incoming request and data
+            print(f"Received POST request for loan ID: {loan_id}")
+            data = json.loads(request.body)
+            print(f"Request data: {data}")
+
+            # Extract and validate the new status
+            new_status = data.get('status')
+            print(f"New status received: {new_status}")
+
+            valid_statuses = ['Received', 'Under Review', 'Approved', 'Denied']
+            if new_status not in valid_statuses:
+                print(f"Invalid status: {new_status}")
+                return JsonResponse({'success': False, 'error': f'Invalid status: {new_status}'})
+
+            # Fetch the loan application using the loan_id
+            application = get_object_or_404(LoanApplication, loan_id=loan_id)
+            print(f"Loan application found: {application}")
+
+            # Update the status
+            application.loan_status = new_status
+            application.save()
+            print(f"Loan status updated to: {new_status}")
+
+            # Return a success response with a message
+            return JsonResponse({'success': True, 'message': f'Status updated to "{new_status}" successfully!'})
+        except LoanApplication.DoesNotExist:
+            print(f"Loan application not found for ID: {loan_id}")
+            return JsonResponse({'success': False, 'error': 'Loan application not found'})
+        except json.JSONDecodeError:
+            print("Error decoding JSON data")
+            return JsonResponse({'success': False, 'error': 'Invalid JSON data'})
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    elif request.method == 'GET':
+        try:
+            print(f"Received GET request for loan ID: {loan_id}")
+
+            # Fetch the loan application using the loan_id
+            application = get_object_or_404(LoanApplication, loan_id=loan_id)
+            print(f"Loan application found: {application}")
+
+            # Return the current status
+            return JsonResponse({'success': True, 'status': application.loan_status})
+        except LoanApplication.DoesNotExist:
+            print(f"Loan application not found for ID: {loan_id}")
+            return JsonResponse({'success': False, 'error': 'Loan application not found'})
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    else:
+        print(f"Invalid request method: {request.method}")
+        return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+# update loan status for the cooperative
+def update_cooperative_loan_status(request, application_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            new_status = data.get('status')
+
+            # Query the LoanApplicationCooperative model
+            loan_application = LoanApplicationCooperative.objects.filter(loan_id=application_id).first()
+
+            if not loan_application:
+                return JsonResponse({'success': False, 'error': 'No LoanApplicationCooperative matches the given query'})
+
+            # Update the loan status
+            loan_application.loan_status = new_status
+            loan_application.save()
+
+            # Return success response
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
 
 # Logout View
 def logout_view(request):
