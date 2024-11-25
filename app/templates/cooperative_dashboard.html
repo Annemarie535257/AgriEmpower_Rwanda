@@ -364,7 +364,29 @@
     #contact-form button {
         width: 100%;
     }
+
+    }
+
+    .green {
+    background-color: green;
+    color: white;
 }
+
+.red {
+    background-color: red;
+    color: white;
+}
+
+.progress-bar.green {
+    background-color: green;
+}
+
+.progress-bar.red {
+    background-color: red;
+}
+
+
+
 
     </style>
 </head>
@@ -761,35 +783,18 @@
 </div>
 </div>
 
-    <!-- Loan Progress Tracker Section -->
 <div id="progress-section" class="tracker-section">
     <h4>Loan Progress Tracker</h4>
     <div class="progress-container">
-        <!-- Step 1: Application Received -->
-        <div id="step-1" class="progress-step {% if application.loan_status == 'Received' or application.loan_status == 'Under Review' or application.loan_status == 'Approved' or application.loan_status == 'Denied' %}active{% endif %}">
-            1
-        </div>
-        
-        <div class="progress-bar {% if application.loan_status == 'Under Review' or application.loan_status == 'Approved' or application.loan_status == 'Denied' %}active{% endif %}"></div>
-
-        <!-- Step 2: Application Under Review -->
-        <div id="step-2" class="progress-step {% if application.loan_status == 'Under Review' or application.loan_status == 'Approved' or application.loan_status == 'Denied' %}active{% endif %}">
-            2
-        </div>        
-        <div class="progress-bar {% if application.loan_status == 'Approved' or application.loan_status == 'Denied' %}active{% endif %}"></div>
-
-        <!-- Step 3: Application Approved/Denied -->
-        <div id="step-3" class="progress-step {% if application.loan_status == 'Approved' or application.loan_status == 'Denied' %}active{% endif %}">
-            3
-        </div>
-        
+        <div id="step-1" class="progress-step {% if loan_status == 'Received' or loan_status == 'Review' or loan_status == 'Approved' %}green{% elif loan_status == 'Rejected' %}red{% endif %}">1</div>
+        <div class="progress-bar {% if loan_status == 'Review' or loan_status == 'Approved' %}green{% elif loan_status == 'Rejected' %}red{% endif %}"></div>
+        <div id="step-2" class="progress-step {% if loan_status == 'Review' or loan_status == 'Approved' %}green{% elif loan_status == 'Rejected' %}red{% endif %}">2</div>
+        <div class="progress-bar {% if loan_status == 'Approved' %}green{% elif loan_status == 'Rejected' %}red{% endif %}"></div>
+        <div id="step-3" class="progress-step {% if loan_status == 'Approved' %}green{% elif loan_status == 'Rejected' %}red{% endif %}">3</div>
     </div>
-
-    <!-- Status Descriptions -->
-    <p>Step 1: Application Received</p>
-    <p>Step 2: Application Under Review</p>
-    <p>Step 3: Application {{ application.loan_status }}</p>
+    <p>Application Status: {{ loan_status }}</p>
 </div>
+
 
 
 
