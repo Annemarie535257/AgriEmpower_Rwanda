@@ -833,11 +833,15 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('loan_submitted') === 'true') {
-            alert('Loan application submitted successfully and is under review.');
-        }
-        });
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('loan_submitted') === 'true') {
+        alert('Loan application submitted successfully and is under review.');
+        // Remove the parameter to avoid showing the alert on page reload
+        const newURL = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, newURL);
+    }
+});
+
 
 
         function showSection(sectionId) {
