@@ -896,7 +896,7 @@ setInterval(() => fetchLoanStatus(farmerId), 30000);
             var selectedBank = document.getElementById("bank-selection").value;
             var downloadLink = document.getElementById("download-link");
 
-            if (selectedBank === "bk") {
+            if (selectedBank === "Bank of Kigali") {
                downloadLink.href = "{% static 'files/BKLoanApplication.pdf' %}";
             } else if (selectedBank === "im") {
                downloadLink.href = "{% static 'files/im-loan-form.pdf' %}";

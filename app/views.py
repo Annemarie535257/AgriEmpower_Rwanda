@@ -214,6 +214,14 @@ def signup_farmer(request):
 # Cooperative Registration
 def signup_cooperative(request):
     if request.method == 'POST':
+        # Check for duplicate username
+        if User.objects.filter(username=request.POST.get('name')).exists():
+            return JsonResponse({'error': 'Username already exists'}, status=400)
+
+        # Check for duplicate email
+        if User.objects.filter(email=request.POST.get('email')).exists():
+            return JsonResponse({'error': 'Email already exists'}, status=400)
+
         user_form = UserRegistrationForm(request.POST)
         cooperative_form = CooperativeRegistrationForm(request.POST)
 
